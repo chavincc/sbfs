@@ -24,4 +24,9 @@ class Scores with ChangeNotifier {
     _sunnyBrookScore = scoreInstance;
     notifyListeners();
   }
+
+  void setSunnyBrookScoreByKey(String key, int value) {
+    _sunnyBrookScore[key] = value;
+    notifyListeners();
+  }
 }

@@ -12,6 +12,8 @@ class ScoreDisplayScreen extends StatelessWidget {
 
   const ScoreDisplayScreen({Key? key}) : super(key: key);
 
+  static bool canEditScore = true;
+
   @override
   Widget build(BuildContext context) {
     final _scoreProvider = Provider.of<Scores>(context);
@@ -39,6 +41,12 @@ class ScoreDisplayScreen extends StatelessWidget {
                       title: title,
                       templateMap: scoreTemplate[title]!,
                       actualScore: _scoreInstance[title] ?? 0,
+                      onPressCallback: canEditScore
+                          ? (title, score) {
+                              _scoreProvider.setSunnyBrookScoreByKey(
+                                  title, score);
+                            }
+                          : null,
                     ),
                   )
                   .toList(),
@@ -85,10 +93,12 @@ class ScoreDisplayScreen extends StatelessWidget {
                       title: title,
                       templateMap: scoreTemplate[title]!,
                       actualScore: _scoreInstance[title] ?? 0,
-                      onPressCallback: (title, score) {
-                        print(title);
-                        print(score);
-                      },
+                      onPressCallback: canEditScore
+                          ? (title, score) {
+                              _scoreProvider.setSunnyBrookScoreByKey(
+                                  title, score);
+                            }
+                          : null,
                     ),
                   )
                   .toList(),
@@ -135,10 +145,12 @@ class ScoreDisplayScreen extends StatelessWidget {
                       title: title,
                       templateMap: scoreTemplate[title]!,
                       actualScore: _scoreInstance[title] ?? 0,
-                      onPressCallback: (title, score) {
-                        print(title);
-                        print(score);
-                      },
+                      onPressCallback: canEditScore
+                          ? (title, score) {
+                              _scoreProvider.setSunnyBrookScoreByKey(
+                                  title, score);
+                            }
+                          : null,
                     ),
                   )
                   .toList(),
@@ -169,12 +181,7 @@ class ScoreDisplayScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 margin: const EdgeInsets.only(top: 30),
                 decoration: const BoxDecoration(
-                  color: Color.fromRGBO(
-                    173,
-                    216,
-                    230,
-                    1,
-                  ),
+                  color: Color.fromRGBO(173, 216, 230, 1),
                   borderRadius: BorderRadius.all(
                     Radius.circular(15),
                   ),
