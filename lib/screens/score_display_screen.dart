@@ -51,36 +51,49 @@ class ScoreDisplayScreen extends StatelessWidget {
                   )
                   .toList(),
               Container(
-                margin: const EdgeInsets.only(
-                  bottom: 5,
-                ),
-                width: double.infinity,
-                child: const Text(
-                  'Resting symmetry score = total × 5',
-                  style: TextStyle(
-                    fontSize: 18,
+                padding: const EdgeInsets.all(10),
+                decoration: const BoxDecoration(
+                  color: Color.fromRGBO(240, 240, 240, 1),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
                   ),
-                  textAlign: TextAlign.left,
                 ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: Text(
-                  "= $_restingTotalScore × 5",
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: Text(
-                  "= ${_restingTotalScore * 5}",
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                  textAlign: TextAlign.left,
+                child: Column(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(
+                        bottom: 5,
+                      ),
+                      width: double.infinity,
+                      child: const Text(
+                        'Resting symmetry score = total × 5',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        "= $_restingTotalScore × 5",
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        "= ${_restingTotalScore * 5}",
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const Padding(
@@ -103,36 +116,49 @@ class ScoreDisplayScreen extends StatelessWidget {
                   )
                   .toList(),
               Container(
-                margin: const EdgeInsets.only(
-                  bottom: 5,
-                ),
-                width: double.infinity,
-                child: const Text(
-                  'Voluntary movement score = total × 4',
-                  style: TextStyle(
-                    fontSize: 18,
+                padding: const EdgeInsets.all(10),
+                decoration: const BoxDecoration(
+                  color: Color.fromRGBO(240, 240, 240, 1),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
                   ),
-                  textAlign: TextAlign.left,
                 ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: Text(
-                  "= $_voluntaryMovementTotalScore × 4",
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: Text(
-                  "= ${_voluntaryMovementTotalScore * 4}",
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                  textAlign: TextAlign.left,
+                child: Column(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(
+                        bottom: 5,
+                      ),
+                      width: double.infinity,
+                      child: const Text(
+                        'Voluntary movement score = total × 4',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        "= $_voluntaryMovementTotalScore × 4",
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        "= ${_voluntaryMovementTotalScore * 4}",
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const Padding(
@@ -155,26 +181,39 @@ class ScoreDisplayScreen extends StatelessWidget {
                   )
                   .toList(),
               Container(
-                margin: const EdgeInsets.only(
-                  bottom: 5,
-                ),
-                width: double.infinity,
-                child: const Text(
-                  'Synkinesis score = total',
-                  style: TextStyle(
-                    fontSize: 18,
+                padding: const EdgeInsets.all(10),
+                decoration: const BoxDecoration(
+                  color: Color.fromRGBO(240, 240, 240, 1),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
                   ),
-                  textAlign: TextAlign.left,
                 ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: Text(
-                  "= $_synkinesisTotalScore",
-                  style: const TextStyle(
-                    fontSize: 16,
-                  ),
-                  textAlign: TextAlign.left,
+                child: Column(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(
+                        bottom: 5,
+                      ),
+                      width: double.infinity,
+                      child: const Text(
+                        'Synkinesis score = total',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        "= $_synkinesisTotalScore",
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Container(
