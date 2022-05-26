@@ -100,22 +100,15 @@ class PosesScreen extends StatelessWidget {
                     primary: Colors.green.shade500,
                     padding: const EdgeInsets.symmetric(vertical: 10),
                   ),
-                  onPressed:
-                      // facesProvider.isFetching || _poseImageIsIncomplete
-                      //     ? null
-                      //     : () async {
-                      //         final _scoreInstance =
-                      //             await facesProvider.computeScore();
-                      //         scoresProvider.setSunnyBrookScore(_scoreInstance);
-                      //         Navigator.of(context)
-                      //             .pushNamed(ScoreDisplayScreen.routeName);
-                      //       },
-                      () async {
-                    final _scoreInstance = await facesProvider.computeScore();
-                    scoresProvider.setSunnyBrookScore(_scoreInstance);
-                    Navigator.of(context)
-                        .pushNamed(ScoreDisplayScreen.routeName);
-                  },
+                  onPressed: facesProvider.isFetching || _poseImageIsIncomplete
+                      ? null
+                      : () async {
+                          final _scoreInstance =
+                              await facesProvider.computeScore();
+                          scoresProvider.setSunnyBrookScore(_scoreInstance);
+                          Navigator.of(context)
+                              .pushNamed(ScoreDisplayScreen.routeName);
+                        },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
