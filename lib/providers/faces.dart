@@ -93,10 +93,10 @@ class Faces with ChangeNotifier {
       'Snarl': 2,
       'Lip Pucker': 1,
       'Brow Lift Synkinesis': 1,
-      'Gentle Eye Closure Synkinesis': 1,
-      'Open Mouth Smile Synkinesis': 4,
+      'Gentle Eye Closure Synkinesis': 0,
+      'Open Mouth Smile Synkinesis': 3,
       'Snarl Synkinesis': 3,
-      'Lip Pucker Synkinesis': 3,
+      'Lip Pucker Synkinesis': 2,
     };
   }
 }
