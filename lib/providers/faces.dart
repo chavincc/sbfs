@@ -86,9 +86,17 @@ class Faces with ChangeNotifier {
     return {
       'Eye': 0,
       'Nasolabial': 1,
-      'Brow Lift': 3,
+      'Mouth': 1,
+      'Brow Lift': 5,
       'Gentle Eye Closure': 5,
-      'Snarl Synkinesis': 1,
+      'Open Mouth Smile': 2,
+      'Snarl': 2,
+      'Lip Pucker': 1,
+      'Brow Lift Synkinesis': 1,
+      'Gentle Eye Closure Synkinesis': 1,
+      'Open Mouth Smile Synkinesis': 4,
+      'Snarl Synkinesis': 3,
+      'Lip Pucker Synkinesis': 3,
     };
   }
 }

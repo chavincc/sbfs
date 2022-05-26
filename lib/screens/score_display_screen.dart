@@ -17,6 +17,11 @@ class ScoreDisplayScreen extends StatelessWidget {
     final _scoreProvider = Provider.of<Scores>(context);
     final _scoreInstance = _scoreProvider.getSunnyBrookScore;
 
+    final _restingTotalScore = _scoreProvider.getGroupSumScore('Resting');
+    final _voluntaryMovementTotalScore =
+        _scoreProvider.getGroupSumScore('Voluntary Movement');
+    final _synkinesisTotalScore = _scoreProvider.getGroupSumScore('Synkinesis');
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Score'),
@@ -37,6 +42,39 @@ class ScoreDisplayScreen extends StatelessWidget {
                     ),
                   )
                   .toList(),
+              Container(
+                margin: const EdgeInsets.only(
+                  bottom: 5,
+                ),
+                width: double.infinity,
+                child: const Text(
+                  'Resting symmetry score = total × 5',
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: Text(
+                  "= $_restingTotalScore × 5",
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: Text(
+                  "= ${_restingTotalScore * 5}",
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
               const Padding(
                 padding: EdgeInsets.only(top: 30),
                 child: ScoreTitle(text: 'Voluntary Movement'),
@@ -50,6 +88,39 @@ class ScoreDisplayScreen extends StatelessWidget {
                     ),
                   )
                   .toList(),
+              Container(
+                margin: const EdgeInsets.only(
+                  bottom: 5,
+                ),
+                width: double.infinity,
+                child: const Text(
+                  'Voluntary movement score = total × 4',
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: Text(
+                  "= $_voluntaryMovementTotalScore × 4",
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: Text(
+                  "= ${_voluntaryMovementTotalScore * 4}",
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
               const Padding(
                 padding: EdgeInsets.only(top: 30),
                 child: ScoreTitle(text: 'Synkinesis'),
@@ -63,6 +134,85 @@ class ScoreDisplayScreen extends StatelessWidget {
                     ),
                   )
                   .toList(),
+              Container(
+                margin: const EdgeInsets.only(
+                  bottom: 5,
+                ),
+                width: double.infinity,
+                child: const Text(
+                  'Synkinesis score = total',
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: Text(
+                  "= $_synkinesisTotalScore",
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(20),
+                margin: const EdgeInsets.only(top: 30),
+                decoration: const BoxDecoration(
+                  color: Color.fromRGBO(
+                    173,
+                    216,
+                    230,
+                    1,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(15),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    const ScoreTitle(text: 'Composite Score'),
+                    Container(
+                      margin: const EdgeInsets.only(
+                        bottom: 5,
+                      ),
+                      width: double.infinity,
+                      child: const Text(
+                        '= Voluntary movement score - Resting symmetry score - Synkinesis score',
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(
+                        bottom: 5,
+                      ),
+                      width: double.infinity,
+                      child: Text(
+                        '= $_voluntaryMovementTotalScore - $_restingTotalScore - $_synkinesisTotalScore',
+                        style: const TextStyle(
+                          fontSize: 20,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        '= ${_voluntaryMovementTotalScore - _restingTotalScore - _synkinesisTotalScore}',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
