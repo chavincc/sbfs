@@ -246,7 +246,7 @@ class ScoreDisplayScreen extends StatelessWidget {
                       ),
                       width: double.infinity,
                       child: Text(
-                        '= $_voluntaryMovementTotalScore - $_restingTotalScore - $_synkinesisTotalScore',
+                        '= ${_voluntaryMovementTotalScore * 4} - ${_restingTotalScore * 5} - $_synkinesisTotalScore',
                         style: const TextStyle(
                           fontSize: 20,
                         ),
@@ -256,7 +256,7 @@ class ScoreDisplayScreen extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: Text(
-                        '= ${_voluntaryMovementTotalScore - _restingTotalScore - _synkinesisTotalScore}',
+                        '= ${_voluntaryMovementTotalScore * 4 - _restingTotalScore * 5 - _synkinesisTotalScore}',
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
