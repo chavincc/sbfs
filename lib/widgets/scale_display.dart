@@ -6,15 +6,18 @@ class ScaleDisplay extends StatelessWidget {
   final String _title;
   final TemplateMap _templateMap;
   final int _actualScore;
+  final void Function(String, int)? _onPressCallback;
 
   const ScaleDisplay({
     required String title,
     required TemplateMap templateMap,
     required int actualScore,
+    void Function(String, int)? onPressCallback,
     Key? key,
   })  : _title = title,
         _templateMap = templateMap,
         _actualScore = actualScore,
+        _onPressCallback = onPressCallback,
         super(key: key);
 
   @override
@@ -37,28 +40,37 @@ class ScaleDisplay extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: _templateMap.entries
                 .map(
-                  (e) => Container(
-                    margin: const EdgeInsets.only(
-                      top: 5,
-                    ),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          height: 24,
-                          width: 30,
-                          child: Checkbox(
-                            value: e.key == _actualScore,
-                            onChanged: (_) {},
-                          ),
+                  (e) => InkWell(
+                    onTap: _onPressCallback != null
+                        ? () {
+                            _onPressCallback!(_title, e.key);
+                          }
+                        : null,
+                    child: IgnorePointer(
+                      child: Container(
+                        margin: const EdgeInsets.only(
+                          top: 5,
                         ),
-                        Text(
-                          e.key.toString(),
-                          style: TextStyle(
-                            fontSize: 19,
-                            color: Colors.grey.shade800,
-                          ),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              height: 24,
+                              width: 30,
+                              child: (Checkbox(
+                                value: e.key == _actualScore,
+                                onChanged: (_) {},
+                              )),
+                            ),
+                            Text(
+                              e.key.toString(),
+                              style: TextStyle(
+                                fontSize: 19,
+                                color: Colors.grey.shade800,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 )

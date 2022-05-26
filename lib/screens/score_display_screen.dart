@@ -85,6 +85,10 @@ class ScoreDisplayScreen extends StatelessWidget {
                       title: title,
                       templateMap: scoreTemplate[title]!,
                       actualScore: _scoreInstance[title] ?? 0,
+                      onPressCallback: (title, score) {
+                        print(title);
+                        print(score);
+                      },
                     ),
                   )
                   .toList(),
@@ -131,6 +135,10 @@ class ScoreDisplayScreen extends StatelessWidget {
                       title: title,
                       templateMap: scoreTemplate[title]!,
                       actualScore: _scoreInstance[title] ?? 0,
+                      onPressCallback: (title, score) {
+                        print(title);
+                        print(score);
+                      },
                     ),
                   )
                   .toList(),
