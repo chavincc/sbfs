@@ -8,15 +8,20 @@ import '../compute/face_brightness.dart';
 
 enum Poses { resting, browLift, eyesClose, snarl, smile, lipPucker }
 
+enum AffectedSide { left, right }
+
 class Faces with ChangeNotifier {
   bool _fetching = false;
   bool _haveEyeSurgery = false;
   Poses? _currentPose;
+  AffectedSide? _affectedSide;
   final Map<Poses, File?> _posesPhoto = {};
 
   Map<Poses, File?> get getPosesPhoto => _posesPhoto;
 
   Poses? get getCurrentPose => _currentPose;
+
+  AffectedSide? get getAffectedSide => _affectedSide;
 
   bool get haveEyeSurgery => _haveEyeSurgery;
 
@@ -24,6 +29,11 @@ class Faces with ChangeNotifier {
 
   void setEyeSurgeryValue(bool value) {
     _haveEyeSurgery = value;
+    notifyListeners();
+  }
+
+  void setAffectedSide(AffectedSide? side) {
+    _affectedSide = side;
     notifyListeners();
   }
 

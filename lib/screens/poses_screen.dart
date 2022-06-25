@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sbfs/screens/score_display_screen.dart';
+import 'package:sbfs/widgets/affected_side_input.dart';
 
 import '../providers/faces.dart';
 import '../providers/scores.dart';
@@ -91,6 +92,12 @@ class PosesScreen extends StatelessWidget {
                   }
                 },
                 controlAffinity: ListTileControlAffinity.leading,
+              ),
+              AffectedSideInput(
+                value: facesProvider.getAffectedSide,
+                onSelectCallback: (side) {
+                  facesProvider.setAffectedSide(side);
+                },
               ),
               Container(
                 margin: const EdgeInsets.only(top: 20),
