@@ -21,7 +21,8 @@ class PosesScreen extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     final _poseImageIsIncomplete = facesProvider.getPosesPhoto.length != 6 ||
-        facesProvider.getPosesPhoto.values.contains(null);
+        facesProvider.getPosesPhoto.values.contains(null) ||
+        facesProvider.getAffectedSide == null;
 
     return Scaffold(
       appBar: AppBar(
