@@ -1,10 +1,13 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import '../screens/camera_screen.dart';
 import '../models/scores.dart';
 import '../compute/face_brightness.dart';
+import '../config/http.dart';
 
 enum Poses { resting, browLift, eyesClose, snarl, smile, lipPucker }
 
@@ -86,10 +89,22 @@ class Faces with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<ScoreInstance> computeScore() async {
+  Future<ScoreInstance> computeScore(BuildContext context) async {
     _fetching = true;
     notifyListeners();
     await Future.delayed(const Duration(seconds: 1));
+    final response = await http.get(Uri.parse('$endpointUrl/'));
+    if (response.statusCode == 200) {
+      final scoreInstance =
+          FaceScoreResponse.fromJson(jsonDecode(response.body));
+    } else {
+      await _showErrorDialog(
+        context,
+        'Network error',
+        'There is something wrong from our side',
+      );
+    }
+
     _fetching = false;
     notifyListeners();
 
@@ -128,4 +143,18 @@ Future _showErrorDialog(
       );
     },
   );
+}
+
+class FaceScoreResponse {
+  final int value;
+
+  const FaceScoreResponse({
+    required this.value,
+  });
+
+  factory FaceScoreResponse.fromJson(Map<String, dynamic> json) {
+    return FaceScoreResponse(
+      value: json['value'],
+    );
+  }
 }

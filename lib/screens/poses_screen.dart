@@ -112,7 +112,7 @@ class PosesScreen extends StatelessWidget {
                       ? null
                       : () async {
                           final _scoreInstance =
-                              await facesProvider.computeScore();
+                              await facesProvider.computeScore(context);
                           scoresProvider.setSunnyBrookScore(_scoreInstance);
                           Navigator.of(context)
                               .pushNamed(ScoreDisplayScreen.routeName);
