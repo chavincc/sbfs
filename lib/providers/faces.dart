@@ -13,6 +13,15 @@ enum Poses { resting, browLift, eyesClose, snarl, smile, lipPucker }
 
 enum AffectedSide { left, right }
 
+Map<Poses, String> requestKeyMap = {
+  Poses.resting: 'img0',
+  Poses.browLift: 'img1',
+  Poses.eyesClose: 'img2',
+  Poses.snarl: 'img3',
+  Poses.smile: 'img4',
+  Poses.lipPucker: 'img5',
+};
+
 class Faces with ChangeNotifier {
   bool _fetching = false;
   bool _haveEyeSurgery = false;
@@ -92,37 +101,47 @@ class Faces with ChangeNotifier {
   Future<ScoreInstance> computeScore(BuildContext context) async {
     _fetching = true;
     notifyListeners();
-    await Future.delayed(const Duration(seconds: 1));
-    final response = await http.get(Uri.parse('$endpointUrl/'));
-    if (response.statusCode == 200) {
-      final scoreInstance =
-          FaceScoreResponse.fromJson(jsonDecode(response.body));
-    } else {
+    ScoreInstance scoreInstance = {};
+    try {
+      final url = Uri.parse('$endpointUrl/grade_faces');
+      final request = http.MultipartRequest('POST', url);
+
+      for (Poses pose in Poses.values) {
+        final imageBytes = await _posesPhoto[pose]!.readAsBytes();
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            requestKeyMap[pose] ?? '',
+            imageBytes,
+            filename: '${requestKeyMap[pose]}.jpg',
+          ),
+        );
+      }
+
+      final response = await request.send();
+      if (response.statusCode == 200) {
+        final respStr = await response.stream.bytesToString();
+        final parsed = jsonDecode(respStr);
+        final faceScoreResponse = FaceScoreResponse.fromJson(parsed);
+        scoreInstance = faceScoreResponse.scoreInstance;
+      } else {
+        await _showErrorDialog(
+          context,
+          'There is something wrong from our side',
+          'Server error with status code ${response.statusCode}',
+        );
+      }
+    } catch (error) {
       await _showErrorDialog(
         context,
-        'Network error',
         'There is something wrong from our side',
+        'Error occurred on client side',
       );
     }
 
     _fetching = false;
     notifyListeners();
 
-    return {
-      'Eye': 0,
-      'Nasolabial': 1,
-      'Mouth': 1,
-      'Brow Lift': 5,
-      'Gentle Eye Closure': 5,
-      'Open Mouth Smile': 2,
-      'Snarl': 2,
-      'Lip Pucker': 1,
-      'Brow Lift Synkinesis': 1,
-      'Gentle Eye Closure Synkinesis': 0,
-      'Open Mouth Smile Synkinesis': 3,
-      'Snarl Synkinesis': 3,
-      'Lip Pucker Synkinesis': 2,
-    };
+    return scoreInstance;
   }
 }
 
@@ -146,15 +165,27 @@ Future _showErrorDialog(
 }
 
 class FaceScoreResponse {
-  final int value;
+  final ScoreInstance scoreInstance;
 
   const FaceScoreResponse({
-    required this.value,
+    required this.scoreInstance,
   });
 
-  factory FaceScoreResponse.fromJson(Map<String, dynamic> json) {
-    return FaceScoreResponse(
-      value: json['value'],
-    );
+  factory FaceScoreResponse.fromJson(List<dynamic> json) {
+    return FaceScoreResponse(scoreInstance: {
+      'Eye': json[0][0][0],
+      'Nasolabial': json[0][0][1],
+      'Mouth': json[0][0][2],
+      'Brow Lift': json[0][1][0],
+      'Gentle Eye Closure': json[0][1][1],
+      'Open Mouth Smile': json[0][1][2],
+      'Snarl': json[0][1][3],
+      'Lip Pucker': json[0][1][4],
+      'Brow Lift Synkinesis': json[0][2][0],
+      'Gentle Eye Closure Synkinesis': json[0][2][1],
+      'Open Mouth Smile Synkinesis': json[0][2][2],
+      'Snarl Synkinesis': json[0][2][3],
+      'Lip Pucker Synkinesis': json[0][2][4],
+    });
   }
 }
