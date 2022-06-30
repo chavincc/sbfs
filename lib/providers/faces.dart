@@ -55,26 +55,26 @@ class Faces with ChangeNotifier {
   }
 
   Future storePhoto(BuildContext context, XFile photoFile) async {
-    final _photo = File(photoFile.path);
+    // final _photo = File(photoFile.path);
 
     _fetching = true;
     notifyListeners();
-    final faceContour = await detectFaceContour(_photo);
-    if (faceContour == null) {
-      await _showErrorDialog(context, 'Error', 'No face detected.');
-      _fetching = false;
-      notifyListeners();
-      return;
-    }
-    final decodedImage = decodeImage(_photo);
-    if (decodedImage == null) {
-      await _showErrorDialog(context, 'Error', 'Fail to decode image.');
-      _fetching = false;
-      notifyListeners();
-      return;
-    }
-    final brightnessIsDifference =
-        compareFaceBrightnessLR(decodedImage, faceContour);
+    // final faceContour = await detectFaceContour(_photo);
+    // if (faceContour == null) {
+    //   await _showErrorDialog(context, 'Error', 'No face detected.');
+    //   _fetching = false;
+    //   notifyListeners();
+    //   return;
+    // }
+    // final decodedImage = decodeImage(_photo);
+    // if (decodedImage == null) {
+    //   await _showErrorDialog(context, 'Error', 'Fail to decode image.');
+    //   _fetching = false;
+    //   notifyListeners();
+    //   return;
+    // }
+    // final brightnessIsDifference =
+    //     compareFaceBrightnessLR(decodedImage, faceContour);
 
     _fetching = false;
     notifyListeners();
@@ -83,13 +83,13 @@ class Faces with ChangeNotifier {
       Navigator.of(context).pop();
       _posesPhoto[_currentPose!] = File(photoFile.path);
       notifyListeners();
-      if (brightnessIsDifference) {
-        await _showErrorDialog(
-          context,
-          'Warning',
-          'Lighting on 2 sides of face might differ too much. Consider retaking photo with better lighting',
-        );
-      }
+      // if (brightnessIsDifference) {
+      //   await _showErrorDialog(
+      //     context,
+      //     'Warning',
+      //     'Lighting on 2 sides of face might differ too much. Consider retaking photo with better lighting',
+      //   );
+      // }
     }
   }
 
