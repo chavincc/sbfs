@@ -116,6 +116,9 @@ class Faces with ChangeNotifier {
           ),
         );
       }
+      request.fields['affectedSide'] =
+          _affectedSide == AffectedSide.left ? 'L' : 'R';
+      request.fields['hasEyeSurgery'] = _haveEyeSurgery ? '1' : '0';
 
       final response = await request.send();
       if (response.statusCode == 200) {
