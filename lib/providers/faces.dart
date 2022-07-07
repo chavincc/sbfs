@@ -98,7 +98,8 @@ class Faces with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<ScoreInstance> computeScore(BuildContext context) async {
+  Future<ScoreInstance> computeScore(
+      BuildContext context, String userInputId) async {
     _fetching = true;
     notifyListeners();
     ScoreInstance scoreInstance = {};
@@ -119,6 +120,7 @@ class Faces with ChangeNotifier {
       request.fields['affectedSide'] =
           _affectedSide == AffectedSide.left ? 'L' : 'R';
       request.fields['hasEyeSurgery'] = _haveEyeSurgery ? '1' : '0';
+      request.fields['userInputId'] = userInputId;
 
       final response = await request.send();
       if (response.statusCode == 200) {

@@ -8,10 +8,29 @@ import '../providers/scores.dart';
 import '../widgets/image_display.dart';
 import '../screens/image_view_screen.dart';
 
-class PosesScreen extends StatelessWidget {
+class PosesScreen extends StatefulWidget {
   static String routeName = '/';
 
   const PosesScreen({Key? key}) : super(key: key);
+
+  @override
+  State<PosesScreen> createState() => _PosesScreenState();
+}
+
+class _PosesScreenState extends State<PosesScreen> {
+  late TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +119,13 @@ class PosesScreen extends StatelessWidget {
                   facesProvider.setAffectedSide(side);
                 },
               ),
+              TextField(
+                decoration: const InputDecoration(
+                  hintText: 'Patient ID',
+                  border: OutlineInputBorder(),
+                ),
+                controller: controller,
+              ),
               Container(
                 margin: const EdgeInsets.only(top: 20),
                 width: double.infinity,
@@ -111,8 +137,8 @@ class PosesScreen extends StatelessWidget {
                   onPressed: facesProvider.isFetching || _poseImageIsIncomplete
                       ? null
                       : () async {
-                          final _scoreInstance =
-                              await facesProvider.computeScore(context);
+                          final _scoreInstance = await facesProvider
+                              .computeScore(context, controller.text);
                           scoresProvider.setSunnyBrookScore(_scoreInstance);
                           Navigator.of(context)
                               .pushNamed(ScoreDisplayScreen.routeName);
