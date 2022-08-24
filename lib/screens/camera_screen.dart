@@ -54,9 +54,6 @@ class _CameraScreenState extends State<CameraScreen> {
     const _cameraMenuHeight = 100;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Take a photo'),
-      ),
       body: CameraPreview(
         controller,
         child: Column(
@@ -81,9 +78,9 @@ class _CameraScreenState extends State<CameraScreen> {
                   Container(
                     width: _screenWidth * 0.8,
                     padding: EdgeInsets.only(
-                      bottom: _screenHeight * 0.5 -
+                      bottom: (_screenHeight * 0.5) -
                           _cameraMenuHeight -
-                          _originalFaceGuideWidth * 0.8 * 0.5,
+                          _originalFaceGuideWidth * 0.5,
                     ),
                     child: _faceGuide,
                   ),
