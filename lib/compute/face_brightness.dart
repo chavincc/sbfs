@@ -5,7 +5,7 @@ import 'package:point_in_polygon/point_in_polygon.dart';
 import 'package:flutter/material.dart';
 
 final faceDetector = GoogleMlKit.vision.faceDetector(
-  const FaceDetectorOptions(
+  FaceDetectorOptions(
     enableContours: true,
   ),
 );
@@ -21,7 +21,7 @@ Future<FaceContour?> detectFaceContour(File imageFile) async {
   final List<Face> _faces = await faceDetector.processImage(_mlKitInputImage);
   if (_faces.isNotEmpty) {
     final _face = _faces[0];
-    final _faceContour = _face.getContour(FaceContourType.face);
+    final _faceContour = _face.contours[FaceContourType.face];
     if (_faceContour != null) {
       return _faceContour;
     }
@@ -39,20 +39,20 @@ bool compareFaceBrightnessLR(
   final List<Point> rightSideFaceContour = <Point>[];
   final List<Point> leftSideFaceContour = <Point>[];
 
-  final _faceContourPosList = faceContour.positionsList;
+  final _faceContourPosList = faceContour.points;
   for (int i = 0; i <= 17; i++) {
     leftSideFaceContour.add(
       Point(
-        x: _faceContourPosList[i].dx.round().toDouble(),
-        y: _faceContourPosList[i].dy.round().toDouble(),
+        x: _faceContourPosList[i].x.round().toDouble(),
+        y: _faceContourPosList[i].y.round().toDouble(),
       ),
     );
   }
   for (int i = 35; i >= 18; i--) {
     rightSideFaceContour.add(
       Point(
-        x: _faceContourPosList[i].dx.round().toDouble(),
-        y: _faceContourPosList[i].dy.round().toDouble(),
+        x: _faceContourPosList[i].x.round().toDouble(),
+        y: _faceContourPosList[i].y.round().toDouble(),
       ),
     );
   }
