@@ -53,95 +53,97 @@ class _CameraScreenState extends State<CameraScreen> {
     const _originalFaceGuideWidth = 326;
     const _cameraMenuHeight = 100;
 
-    return CameraPreview(
-      controller,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: facesProvider.isFetching
-            ? [
-                Container(
-                  width: _screenWidth,
-                  height: _screenHeight,
-                  decoration: const BoxDecoration(
-                    color: Color.fromRGBO(0, 0, 0, 0.5),
+    return Scaffold(
+      body: CameraPreview(
+        controller,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: facesProvider.isFetching
+              ? [
+                  Container(
+                    width: _screenWidth,
+                    height: _screenHeight,
+                    decoration: const BoxDecoration(
+                      color: Color.fromRGBO(0, 0, 0, 0.5),
+                    ),
+                    alignment: Alignment.center,
+                    child: const SizedBox(
+                      height: 75,
+                      width: 75,
+                      child: CircularProgressIndicator(),
+                    ),
                   ),
-                  alignment: Alignment.center,
-                  child: const SizedBox(
-                    height: 75,
-                    width: 75,
-                    child: CircularProgressIndicator(),
+                ]
+              : [
+                  Container(
+                    width: _screenWidth * 0.8,
+                    padding: EdgeInsets.only(
+                      bottom: (_screenHeight * 0.5) -
+                          _cameraMenuHeight -
+                          _originalFaceGuideWidth * 0.5,
+                    ),
+                    child: _faceGuide,
                   ),
-                ),
-              ]
-            : [
-                Container(
-                  width: _screenWidth * 0.8,
-                  padding: EdgeInsets.only(
-                    bottom: _screenHeight * 0.5 -
-                        _cameraMenuHeight -
-                        _originalFaceGuideWidth * 0.8 * 0.5,
-                  ),
-                  child: _faceGuide,
-                ),
-                Container(
-                  width: _screenWidth,
-                  height: 100,
-                  decoration: const BoxDecoration(
-                    color: Color.fromRGBO(0, 0, 0, 0.5),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
-                          shape: const CircleBorder(),
-                          padding: const EdgeInsets.all(15),
-                        ),
-                        onPressed: () async {
-                          final _photo = await controller.takePicture();
-                          await facesProvider.storePhoto(context, _photo);
-                        },
-                        child: const Icon(
-                          Icons.camera_alt,
-                          color: Colors.black,
-                          size: 30,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () async {
-                          final ImagePicker _picker = ImagePicker();
-                          final _photo = await _picker.pickImage(
-                              source: ImageSource.gallery);
-                          if (_photo != null) {
-                            await facesProvider.storePhoto(context, _photo);
-                          }
-                        },
-                        child: const SizedBox(
-                          height: 30,
-                          width: 30,
-                          child: Icon(
-                            Icons.photo,
+                  Container(
+                    width: _screenWidth,
+                    height: 100,
+                    decoration: const BoxDecoration(
+                      color: Color.fromRGBO(0, 0, 0, 0.5),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Icon(
+                            Icons.arrow_back,
                             color: Colors.white,
                             size: 30,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.white,
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(15),
+                          ),
+                          onPressed: () async {
+                            final _photo = await controller.takePicture();
+                            await facesProvider.storePhoto(context, _photo);
+                          },
+                          child: const Icon(
+                            Icons.camera_alt,
+                            color: Colors.black,
+                            size: 30,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () async {
+                            final ImagePicker _picker = ImagePicker();
+                            final _photo = await _picker.pickImage(
+                                source: ImageSource.gallery);
+                            if (_photo != null) {
+                              await facesProvider.storePhoto(context, _photo);
+                            }
+                          },
+                          child: const SizedBox(
+                            height: 30,
+                            width: 30,
+                            child: Icon(
+                              Icons.photo,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+        ),
       ),
     );
   }
