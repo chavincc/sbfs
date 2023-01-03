@@ -3,6 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../compute/camera_sizing.dart';
 import '../providers/faces.dart';
 
 class CameraScreen extends StatefulWidget {
@@ -50,8 +51,26 @@ class _CameraScreenState extends State<CameraScreen> {
     final _screenWidth = MediaQuery.of(context).size.width;
     final _screenHeight = MediaQuery.of(context).size.height;
     final _faceGuide = Image.asset('images/face-guide.png');
-    const _originalFaceGuideWidth = 326;
-    const _cameraMenuHeight = 100;
+
+    // get camera preview size (app always use portrait mode -> swap width and height value)
+    double _cameraPreviewWidth = controller.value.previewSize?.height ?? 0;
+    double _cameraPreviewHeight = controller.value.previewSize?.width ?? 0;
+
+    // get camera preview size adjusted to the screen (its container)
+    final _renderedSize = getCameraRenderedSize(
+        previewWidth: _cameraPreviewWidth,
+        previewHeight: _cameraPreviewHeight,
+        screenWidth: _screenWidth,
+        screenHeight: _screenHeight);
+
+    const double _faceGuideWidthRatio = 0.8;
+    final _originalFaceGuideSize = Size(width: 334, height: 326);
+    final _renderedFaceGuideHeight = getFaceGuideRenderedHeight(
+        originalFaceGuideSize: _originalFaceGuideSize,
+        cameraRenderedWidth: _renderedSize.width,
+        faceGuideWidthRatio: _faceGuideWidthRatio);
+
+    const double _cameraMenuHeight = 75;
 
     return Scaffold(
       body: CameraPreview(
@@ -75,20 +94,27 @@ class _CameraScreenState extends State<CameraScreen> {
                   ),
                 ]
               : [
-                  Container(
-                    width: _screenWidth * 0.8,
-                    padding: EdgeInsets.only(
-                      bottom: (_screenHeight * 0.5) -
-                          _cameraMenuHeight -
-                          _originalFaceGuideWidth * 0.5,
+                  SizedBox(
+                    width: _screenWidth * _faceGuideWidthRatio,
+                    height: _renderedSize.height - _cameraMenuHeight,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          child: _faceGuide,
+                          left: 0,
+                          right: 0,
+                          bottom: (_renderedSize.height * 0.4) -
+                              _cameraMenuHeight -
+                              (_renderedFaceGuideHeight * 0.5),
+                        ),
+                      ],
                     ),
-                    child: _faceGuide,
                   ),
                   Container(
                     width: _screenWidth,
-                    height: 100,
+                    height: _cameraMenuHeight,
                     decoration: const BoxDecoration(
-                      color: Color.fromRGBO(0, 0, 0, 0.5),
+                      color: Color.fromRGBO(0, 0, 0, 0.35),
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
