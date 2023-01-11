@@ -28,6 +28,7 @@ class Faces with ChangeNotifier {
   Poses? _currentPose;
   AffectedSide? _affectedSide;
   final Map<Poses, File?> _posesPhoto = {};
+  String? _patientId;
 
   Map<Poses, File?> get getPosesPhoto => _posesPhoto;
 
@@ -38,6 +39,8 @@ class Faces with ChangeNotifier {
   bool get haveEyeSurgery => _haveEyeSurgery;
 
   bool get isFetching => _fetching;
+
+  String? get getPatientId => _patientId;
 
   void setEyeSurgeryValue(bool value) {
     _haveEyeSurgery = value;
@@ -121,6 +124,8 @@ class Faces with ChangeNotifier {
           _affectedSide == AffectedSide.left ? 'L' : 'R';
       request.fields['hasEyeSurgery'] = _haveEyeSurgery ? '1' : '0';
       request.fields['userInputId'] = userInputId;
+
+      _patientId = userInputId;
 
       final response = await request.send();
       if (response.statusCode == 200) {
