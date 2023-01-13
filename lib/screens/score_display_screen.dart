@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sbfs/models/scores.dart';
 
-import '../compute/result_pdf.dart';
+import '../result_pdf/result_pdf.dart';
 import '../providers/faces.dart';
 import '../providers/scores.dart';
 import '../widgets/score_title.dart';
@@ -41,6 +41,10 @@ class ScoreDisplayScreen extends StatelessWidget {
                 _facesProvider.getPatientId,
                 _facesProvider.getAffectedSide,
                 _facesProvider.haveEyeSurgery,
+                _scoreInstance,
+                _restingTotalScore,
+                _voluntaryMovementTotalScore,
+                _synkinesisTotalScore,
               );
               final output = await getApplicationDocumentsDirectory();
               final file = File("${output.path}/example.pdf");
