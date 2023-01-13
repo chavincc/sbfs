@@ -14,6 +14,8 @@ pw.Page buildInputImagePagePdf(
   AffectedSide? affectedSide,
   bool haveEyeSurgery,
 ) {
+  pw.Widget pageTitle = buildPageTitle('Patient Input');
+
   final strAffectedSide = (affectedSide != null)
       ? (affectedSide == AffectedSide.left)
           ? 'L'
@@ -26,7 +28,7 @@ pw.Page buildInputImagePagePdf(
     build: (pw.Context context) {
       return pw.Column(
         children: [
-          buildPageTitle('Patient Input'),
+          pageTitle,
           pw.Container(
             margin: const pw.EdgeInsets.only(bottom: 25),
             child: pw.Column(
