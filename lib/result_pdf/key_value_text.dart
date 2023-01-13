@@ -2,10 +2,10 @@ import 'package:pdf/widgets.dart' as pw;
 
 pw.Widget buildKeyValueText(String key, String value) {
   return pw.Container(
-      width: double.infinity,
-      margin: const pw.EdgeInsets.only(bottom: 10),
-      child: pw.RichText(
-          text: pw.TextSpan(
+    width: double.infinity,
+    margin: const pw.EdgeInsets.only(bottom: 10),
+    child: pw.RichText(
+      text: pw.TextSpan(
         children: [
           pw.TextSpan(
             text: '$key : ',
@@ -21,13 +21,7 @@ pw.Widget buildKeyValueText(String key, String value) {
             ),
           ),
         ],
-      ))
-      // child: pw.Text(
-      //   title,
-      //   style: const pw.TextStyle(
-      //     fontSize: 25,
-      //     decoration: pw.TextDecoration.underline,
-      //   ),
-      // ),
-      );
+      ),
+    ),
+  );
 }
