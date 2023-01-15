@@ -9,6 +9,7 @@ import './screens/image_view_screen.dart';
 import './screens/score_display_screen.dart';
 import './providers/faces.dart';
 import './providers/scores.dart';
+import './providers/landmarks.dart';
 
 late List<CameraDescription> cameras;
 Future<void> main() async {
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => Faces()),
         ChangeNotifierProvider(create: (_) => Scores()),
+        ChangeNotifierProvider(create: (_) => Landmarks()),
       ],
       child: MaterialApp(
         home: const PosesScreen(),
