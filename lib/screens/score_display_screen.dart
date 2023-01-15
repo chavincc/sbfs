@@ -1,7 +1,12 @@
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sbfs/models/scores.dart';
 
+import '../result_pdf/result_pdf.dart';
+import '../providers/faces.dart';
 import '../providers/scores.dart';
 import '../widgets/score_title.dart';
 import '../widgets/multiple_choice_display.dart';
@@ -18,6 +23,7 @@ class ScoreDisplayScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final _scoreProvider = Provider.of<Scores>(context);
     final _scoreInstance = _scoreProvider.getSunnyBrookScore;
+    final _facesProvider = Provider.of<Faces>(context, listen: false);
 
     final _restingTotalScore = _scoreProvider.getGroupSumScore('Resting');
     final _voluntaryMovementTotalScore =
@@ -27,6 +33,28 @@ class ScoreDisplayScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Score'),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final resultPdf = buildResultPdf(
+                _facesProvider.getPosesPhoto,
+                _facesProvider.getPatientId,
+                _facesProvider.getAffectedSide,
+                _facesProvider.haveEyeSurgery,
+                _scoreInstance,
+                _restingTotalScore,
+                _voluntaryMovementTotalScore,
+                _synkinesisTotalScore,
+              );
+              final output = await getApplicationDocumentsDirectory();
+              final file = File("${output.path}/example.pdf");
+              final bytes = await resultPdf.save();
+              await file.writeAsBytes(bytes);
+              await OpenFilex.open((file.path));
+            },
+            icon: const Icon(Icons.download),
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(
