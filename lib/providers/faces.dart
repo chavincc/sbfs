@@ -60,8 +60,8 @@ class Faces with ChangeNotifier {
   Future storePhoto(BuildContext context, XFile photoFile) async {
     // final _photo = File(photoFile.path);
 
-    _fetching = true;
-    notifyListeners();
+    // _fetching = true;
+    // notifyListeners();
     // final faceContour = await detectFaceContour(_photo);
     // if (faceContour == null) {
     //   await _showErrorDialog(context, 'Error', 'No face detected.');
@@ -79,8 +79,8 @@ class Faces with ChangeNotifier {
     // final brightnessIsDifference =
     //     compareFaceBrightnessLR(decodedImage, faceContour);
 
-    _fetching = false;
-    notifyListeners();
+    // _fetching = false;
+    // notifyListeners();
 
     if (_currentPose != null) {
       Navigator.of(context).pop();
