@@ -5,8 +5,10 @@ import 'package:sbfs/widgets/affected_side_input.dart';
 
 import '../providers/faces.dart';
 import '../providers/scores.dart';
+import '../providers/landmarks.dart';
 import '../widgets/image_display.dart';
 import '../screens/image_view_screen.dart';
+import '../models/size.dart';
 
 class PosesScreen extends StatefulWidget {
   static String routeName = '/';
@@ -36,8 +38,12 @@ class _PosesScreenState extends State<PosesScreen> {
   Widget build(BuildContext context) {
     final facesProvider = Provider.of<Faces>(context);
     final scoresProvider = Provider.of<Scores>(context, listen: false);
+    final landmarksProvider = Provider.of<Landmarks>(context, listen: false);
 
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenStatusBarPadding = MediaQuery.of(context).padding.top;
+    final appBarHeight = AppBar().preferredSize.height;
 
     final _poseImageIsIncomplete = facesProvider.getPosesPhoto.length != 6 ||
         facesProvider.getPosesPhoto.values.contains(null) ||
@@ -70,16 +76,34 @@ class _PosesScreenState extends State<PosesScreen> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {
+                            onTap: () async {
                               if (facesProvider.getPosesPhoto[pose] == null) {
                                 facesProvider.startTakingPhoto(context, pose);
                               } else {
+                                landmarksProvider.setCurrentPose(pose);
+
+                                // get current image size for later marker transformation
+                                final file = facesProvider.getPosesPhoto[pose]!;
+                                final decodedImage = await decodeImageFromList(
+                                    file.readAsBytesSync());
+                                landmarksProvider.setCurrentImageSize(Size(
+                                  width: decodedImage.width.toDouble(),
+                                  height: decodedImage.height.toDouble(),
+                                ));
+                                // get screen size for later marker transformation
+                                landmarksProvider.setContainerDimension(Size(
+                                  width: screenWidth,
+                                  height: screenHeight -
+                                      appBarHeight -
+                                      screenStatusBarPadding,
+                                ));
+
                                 Navigator.of(context).pushNamed(
                                   ImageViewScreen.routeName,
                                   arguments: ImageViewScreenArguments(
                                     photoFile:
                                         facesProvider.getPosesPhoto[pose]!,
-                                    pose: _getPoseLabel(pose),
+                                    poseString: _getPoseLabel(pose),
                                   ),
                                 );
                               }

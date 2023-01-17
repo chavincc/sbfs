@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 
+import './faces.dart';
+import '../models/size.dart';
+
 class Coord {
   double x = 0;
   double y = 0;
@@ -13,22 +16,38 @@ class Coord {
 }
 
 class Landmarks with ChangeNotifier {
-  List<Coord> _faceLandmarks = [
-    Coord(x: 100, y: 100),
-    Coord(x: 50, y: 60),
-  ];
+  Poses? _currentPose;
+  Size? _currentImageSize;
+  Size? _containerDimension;
+  Map<Poses, List<Coord>> _faceLandmarks = {
+    Poses.resting: [
+      Coord(x: 0, y: 0.3),
+      Coord(x: 0.5, y: 0.5),
+    ]
+  };
 
-  List<Coord> get getFaceLandmark =>
-      _faceLandmarks.map((Coord c) => Coord.clone(c)).toList();
+  List<Coord> get getFaceLandmark => (_faceLandmarks.containsKey(_currentPose))
+      ? _faceLandmarks[_currentPose]!
+      : [];
 
-  void updateFaceLandmarkPosition(
-    double newX,
-    double newY,
-    int landmarkIndex,
-  ) {
-    if (_faceLandmarks.length > landmarkIndex) {
-      _faceLandmarks[landmarkIndex].x = newX;
-      _faceLandmarks[landmarkIndex].y = newY;
-    }
+  Poses? get getCurrentPose => _currentPose;
+
+  Size? get getCurrentImageSize => _currentImageSize;
+
+  Size? get getContainerDimension => _containerDimension;
+
+  void setCurrentPose(Poses pose) {
+    _currentPose = pose;
+    notifyListeners();
+  }
+
+  void setCurrentImageSize(Size size) {
+    _currentImageSize = size;
+    notifyListeners();
+  }
+
+  void setContainerDimension(Size size) {
+    _containerDimension = size;
+    notifyListeners();
   }
 }
