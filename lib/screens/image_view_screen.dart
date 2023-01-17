@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'dart:io';
 
 import '../providers/landmarks.dart';
+import '../models/size.dart';
+import '../compute/camera_sizing.dart';
 
 class ImageViewScreen extends StatefulWidget {
   static String routeName = '/image-view';
@@ -15,12 +17,30 @@ class ImageViewScreen extends StatefulWidget {
 
 class _ImageViewScreenState extends State<ImageViewScreen> {
   late List<Coord> _faceLandmarks;
+  late Size _containerDimension;
 
   @override
   void initState() {
     // load landmark once
     final landmarksProvider = Provider.of<Landmarks>(context, listen: false);
-    _faceLandmarks = landmarksProvider.getFaceLandmark;
+    // deepcopy
+    _faceLandmarks = landmarksProvider.getFaceLandmark
+        .map((Coord c) => Coord.clone(c))
+        .toList();
+    // denormalize position
+    final imageSize = landmarksProvider.getCurrentImageSize!;
+    _containerDimension = landmarksProvider.getContainerDimension!;
+    final scaledImageSize = getCameraRenderedSize(
+      previewWidth: imageSize.width,
+      previewHeight: imageSize.height,
+      screenWidth: _containerDimension.width,
+      screenHeight: _containerDimension.height,
+    );
+
+    for (Coord c in _faceLandmarks) {
+      c.x = c.x * scaledImageSize.width;
+      c.y = c.y * scaledImageSize.height;
+    }
 
     super.initState();
   }
@@ -56,7 +76,7 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
           ),
         );
       },
-    );
+    ).toList();
 
     return WillPopScope(
       onWillPop: () async {
@@ -68,7 +88,7 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(args.pose),
+          title: Text(args.poseString),
         ),
         body: InteractiveViewer(
           maxScale: 5,
@@ -85,11 +105,11 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
 }
 
 class ImageViewScreenArguments {
-  final String pose;
+  final String poseString;
   final File photoFile;
 
   ImageViewScreenArguments({
-    required this.pose,
+    required this.poseString,
     required this.photoFile,
   });
 }
