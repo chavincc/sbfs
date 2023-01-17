@@ -18,6 +18,7 @@ class ImageViewScreen extends StatefulWidget {
 class _ImageViewScreenState extends State<ImageViewScreen> {
   late List<Coord> _faceLandmarks;
   late Size _containerDimension;
+  late int _markerSize;
 
   @override
   void initState() {
@@ -27,7 +28,8 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
     _faceLandmarks = landmarksProvider.getFaceLandmark
         .map((Coord c) => Coord.clone(c))
         .toList();
-    // denormalize position
+
+    // get rendered image size
     final imageSize = landmarksProvider.getCurrentImageSize!;
     _containerDimension = landmarksProvider.getContainerDimension!;
     final scaledImageSize = getCameraRenderedSize(
@@ -37,9 +39,13 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
       screenHeight: _containerDimension.height,
     );
 
+    // get initial marker size
+    _markerSize = landmarksProvider.getMarkerSize;
+
+    // denormalize position and adjust per marker shape
     for (Coord c in _faceLandmarks) {
-      c.x = c.x * scaledImageSize.width;
-      c.y = c.y * scaledImageSize.height;
+      c.x = (c.x * scaledImageSize.width) - (_markerSize / 2);
+      c.y = (c.y * scaledImageSize.height) - (_markerSize / 2);
     }
 
     super.initState();
@@ -66,8 +72,8 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
               });
             },
             child: Container(
-              width: 5,
-              height: 5,
+              width: _markerSize.toDouble(),
+              height: _markerSize.toDouble(),
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.red,
