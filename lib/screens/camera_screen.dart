@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../compute/camera_sizing.dart';
 import '../providers/faces.dart';
+import '../models/size.dart';
 
 class CameraScreen extends StatefulWidget {
   static String routeName = '/camera';
