@@ -138,8 +138,10 @@ class _CameraScreenState extends State<CameraScreen> {
                             padding: const EdgeInsets.all(15),
                           ),
                           onPressed: () async {
-                            final _photo = await controller.takePicture();
-                            await facesProvider.storePhoto(context, _photo);
+                            if (!controller.value.isTakingPicture) {
+                              final _photo = await controller.takePicture();
+                              await facesProvider.storePhoto(context, _photo);
+                            }
                           },
                           child: const Icon(
                             Icons.camera_alt,
