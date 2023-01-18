@@ -72,4 +72,10 @@ class Landmarks with ChangeNotifier {
     _containerDimension = size;
     notifyListeners();
   }
+
+  void saveFaceLandmark(List<Coord> newCoordList) {
+    if (_currentPose != null) {
+      _faceLandmarks[_currentPose!] = newCoordList;
+    }
+  }
 }

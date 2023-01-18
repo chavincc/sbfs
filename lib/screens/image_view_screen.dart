@@ -20,6 +20,7 @@ class ImageViewScreen extends StatefulWidget {
 class _ImageViewScreenState extends State<ImageViewScreen> {
   late List<Coord> _faceLandmarks;
   late Size _containerDimension;
+  late Size _scaledImageSize;
   late int _markerSize;
 
   @override
@@ -34,7 +35,7 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
     // get rendered image size
     final imageSize = landmarksProvider.getCurrentImageSize!;
     _containerDimension = landmarksProvider.getContainerDimension!;
-    final scaledImageSize = getCameraRenderedSize(
+    _scaledImageSize = getCameraRenderedSize(
       previewWidth: imageSize.width,
       previewHeight: imageSize.height,
       screenWidth: _containerDimension.width,
@@ -46,10 +47,29 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
 
     // denormalize position and adjust per marker shape
     for (Coord c in _faceLandmarks) {
-      denormalizeCoord(c, scaledImageSize, _markerSize.toDouble());
+      denormalizeCoord(c, _scaledImageSize, _markerSize.toDouble());
     }
 
     super.initState();
+  }
+
+  void _handleSaveMarkers(
+    BuildContext context,
+    List<Coord> rawCoord,
+    Size scaledImageSize,
+    int markerSize,
+  ) {
+    for (Coord c in rawCoord) {
+      normalizeCoord(c, scaledImageSize, markerSize.toDouble());
+    }
+    final landmarkProvider = Provider.of<Landmarks>(context, listen: false);
+    landmarkProvider.saveFaceLandmark(rawCoord);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('marker location saved'),
+      ),
+    );
+    Navigator.of(context).pop();
   }
 
   @override
@@ -88,6 +108,22 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(args.poseString),
+          actions: [
+            ElevatedButton(
+              child: const Text('Save'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.lightBlue,
+              ),
+              onPressed: () {
+                _handleSaveMarkers(
+                  context,
+                  _faceLandmarks,
+                  _scaledImageSize,
+                  _markerSize,
+                );
+              },
+            )
+          ],
         ),
         body: InteractiveViewer(
           maxScale: 5,
