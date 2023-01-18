@@ -72,6 +72,7 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
               _faceLandmarks[idx].y += details.delta.dy;
             });
           },
+          color: markerGroupColor[coord.group]!,
         );
       },
     ).toList();

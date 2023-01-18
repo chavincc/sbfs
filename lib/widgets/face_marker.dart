@@ -5,17 +5,20 @@ class FaceMarker extends StatelessWidget {
   final double _top;
   final double _markerSize;
   final void Function(DragUpdateDetails)? _onPanUpdate;
+  final Color _color;
 
   const FaceMarker(
       {required double left,
       required double top,
       required double markerSize,
       void Function(DragUpdateDetails)? onPanUpdate,
+      Color color = Colors.black,
       Key? key})
       : _left = left,
         _top = top,
         _markerSize = markerSize,
         _onPanUpdate = onPanUpdate,
+        _color = color,
         super(key: key);
 
   @override
@@ -28,9 +31,14 @@ class FaceMarker extends StatelessWidget {
         child: Container(
           width: _markerSize.toDouble(),
           height: _markerSize.toDouble(),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.red,
+            color: _color,
+            border: Border.all(
+              width: 1,
+              color: Colors.black,
+              style: BorderStyle.solid,
+            ),
           ),
         ),
       ),
