@@ -5,6 +5,8 @@ import 'dart:io';
 import '../providers/landmarks.dart';
 import '../models/size.dart';
 import '../compute/camera_sizing.dart';
+import '../compute/coord_conversion.dart';
+import '../widgets/face_marker.dart';
 
 class ImageViewScreen extends StatefulWidget {
   static String routeName = '/image-view';
@@ -44,8 +46,7 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
 
     // denormalize position and adjust per marker shape
     for (Coord c in _faceLandmarks) {
-      c.x = (c.x * scaledImageSize.width) - (_markerSize / 2);
-      c.y = (c.y * scaledImageSize.height) - (_markerSize / 2);
+      denormalizeCoord(c, scaledImageSize, _markerSize.toDouble());
     }
 
     super.initState();
@@ -61,25 +62,16 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
         int idx = entry.key;
         Coord coord = entry.value;
 
-        return Positioned(
+        return FaceMarker(
           left: coord.x,
           top: coord.y,
-          child: GestureDetector(
-            onPanUpdate: (details) {
-              setState(() {
-                _faceLandmarks[idx].x += details.delta.dx;
-                _faceLandmarks[idx].y += details.delta.dy;
-              });
-            },
-            child: Container(
-              width: _markerSize.toDouble(),
-              height: _markerSize.toDouble(),
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.red,
-              ),
-            ),
-          ),
+          markerSize: _markerSize.toDouble(),
+          onPanUpdate: (details) {
+            setState(() {
+              _faceLandmarks[idx].x += details.delta.dx;
+              _faceLandmarks[idx].y += details.delta.dy;
+            });
+          },
         );
       },
     ).toList();
