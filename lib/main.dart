@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import './screens/camera_screen.dart';
 import './screens/poses_screen.dart';
 import './screens/image_view_screen.dart';
+import './screens/marker_screen.dart';
 import './screens/score_display_screen.dart';
 import './providers/faces.dart';
 import './providers/scores.dart';
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
                 cameras: cameras,
               ),
           ImageViewScreen.routeName: (_) => const ImageViewScreen(),
+          MarkerScreen.routeName: (_) => const MarkerScreen(),
           ScoreDisplayScreen.routeName: (_) => const ScoreDisplayScreen(),
         },
       ),
