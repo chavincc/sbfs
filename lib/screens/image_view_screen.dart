@@ -77,25 +77,28 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
     final args =
         ModalRoute.of(context)!.settings.arguments as ImageViewScreenArguments;
 
-    final markers = _faceLandmarks.asMap().entries.map(
-      (entry) {
-        int idx = entry.key;
-        Coord coord = entry.value;
+    List<FaceMarker> markers = [];
+    if (args.showMarker) {
+      markers = _faceLandmarks.asMap().entries.map(
+        (entry) {
+          int idx = entry.key;
+          Coord coord = entry.value;
 
-        return FaceMarker(
-          left: coord.x,
-          top: coord.y,
-          markerSize: _markerSize.toDouble(),
-          onPanUpdate: (details) {
-            setState(() {
-              _faceLandmarks[idx].x += details.delta.dx;
-              _faceLandmarks[idx].y += details.delta.dy;
-            });
-          },
-          color: markerGroupColor[coord.group]!,
-        );
-      },
-    ).toList();
+          return FaceMarker(
+            left: coord.x,
+            top: coord.y,
+            markerSize: _markerSize.toDouble(),
+            onPanUpdate: (details) {
+              setState(() {
+                _faceLandmarks[idx].x += details.delta.dx;
+                _faceLandmarks[idx].y += details.delta.dy;
+              });
+            },
+            color: markerGroupColor[coord.group]!,
+          );
+        },
+      ).toList();
+    }
 
     return WillPopScope(
       onWillPop: () async {
@@ -109,20 +112,22 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
         appBar: AppBar(
           title: Text(args.poseString),
           actions: [
-            ElevatedButton(
-              child: const Text('Save'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.lightBlue,
-              ),
-              onPressed: () {
-                _handleSaveMarkers(
-                  context,
-                  _faceLandmarks,
-                  _scaledImageSize,
-                  _markerSize,
-                );
-              },
-            )
+            args.showMarker
+                ? ElevatedButton(
+                    child: const Text('Save'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.lightBlue,
+                    ),
+                    onPressed: () {
+                      _handleSaveMarkers(
+                        context,
+                        _faceLandmarks,
+                        _scaledImageSize,
+                        _markerSize,
+                      );
+                    },
+                  )
+                : Container(),
           ],
         ),
         body: InteractiveViewer(
@@ -142,9 +147,11 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
 class ImageViewScreenArguments {
   final String poseString;
   final File photoFile;
+  final bool showMarker;
 
   ImageViewScreenArguments({
     required this.poseString,
     required this.photoFile,
+    this.showMarker = false,
   });
 }
