@@ -116,7 +116,7 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
                 ? ElevatedButton(
                     child: const Text('Save'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.lightBlue,
+                      backgroundColor: Colors.green,
                     ),
                     onPressed: () {
                       _handleSaveMarkers(
