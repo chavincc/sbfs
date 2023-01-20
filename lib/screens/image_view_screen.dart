@@ -21,7 +21,9 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
   late List<Coord> _faceLandmarks;
   late Size _containerDimension;
   late Size _scaledImageSize;
+
   late int _markerSize;
+  late int _markerInvisPadding;
 
   @override
   void initState() {
@@ -44,10 +46,16 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
 
     // get initial marker size
     _markerSize = landmarksProvider.getMarkerSize;
+    _markerInvisPadding = landmarksProvider.getMarkerInvisPadding;
 
     // denormalize position and adjust per marker shape
     for (Coord c in _faceLandmarks) {
-      denormalizeCoord(c, _scaledImageSize, _markerSize.toDouble());
+      denormalizeCoord(
+        c,
+        _scaledImageSize,
+        _markerSize.toDouble(),
+        _markerInvisPadding.toDouble(),
+      );
     }
 
     super.initState();
@@ -57,10 +65,11 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
     BuildContext context,
     List<Coord> rawCoord,
     Size scaledImageSize,
-    int markerSize,
+    double markerSize,
+    double markerPadding,
   ) {
     for (Coord c in rawCoord) {
-      normalizeCoord(c, scaledImageSize, markerSize.toDouble());
+      normalizeCoord(c, scaledImageSize, markerSize, markerPadding);
     }
     final landmarkProvider = Provider.of<Landmarks>(context, listen: false);
     landmarkProvider.saveFaceLandmark(rawCoord);
@@ -88,6 +97,7 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
             left: coord.x,
             top: coord.y,
             markerSize: _markerSize.toDouble(),
+            markerInvisPadding: _markerInvisPadding.toDouble(),
             onPanUpdate: (details) {
               setState(() {
                 _faceLandmarks[idx].x += details.delta.dx;
@@ -123,7 +133,8 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
                         context,
                         _faceLandmarks,
                         _scaledImageSize,
-                        _markerSize,
+                        _markerSize.toDouble(),
+                        _markerInvisPadding.toDouble(),
                       );
                     },
                   )
