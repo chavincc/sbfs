@@ -52,9 +52,11 @@ class Landmarks with ChangeNotifier {
 
   Poses? get getCurrentPose => _currentPose;
 
-  Size? get getCurrentImageSize => _currentImageSize;
+  Size get getCurrentImageSize =>
+      _currentImageSize ?? Size(width: 0, height: 0);
 
-  Size? get getContainerDimension => _containerDimension;
+  Size get getContainerDimension =>
+      _containerDimension ?? Size(width: 0, height: 0);
 
   int get getMarkerSize => _markerSize;
 
