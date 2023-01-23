@@ -35,8 +35,8 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
         .toList();
 
     // get rendered image size
-    final imageSize = landmarksProvider.getCurrentImageSize!;
-    _containerDimension = landmarksProvider.getContainerDimension!;
+    final imageSize = landmarksProvider.getCurrentImageSize;
+    _containerDimension = landmarksProvider.getContainerDimension;
     _scaledImageSize = getCameraRenderedSize(
       previewWidth: imageSize.width,
       previewHeight: imageSize.height,
