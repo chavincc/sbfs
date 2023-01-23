@@ -3,10 +3,12 @@ import 'package:provider/provider.dart';
 import 'dart:io';
 
 import '../providers/landmarks.dart';
+import '../providers/faces.dart';
 import '../models/size.dart';
 import '../compute/camera_sizing.dart';
 import '../compute/coord_conversion.dart';
 import '../widgets/face_marker.dart';
+import '../widgets/show_example_button.dart';
 
 class ImageViewScreen extends StatefulWidget {
   static String routeName = '/image-view';
@@ -18,6 +20,7 @@ class ImageViewScreen extends StatefulWidget {
 }
 
 class _ImageViewScreenState extends State<ImageViewScreen> {
+  late Poses _currentPose;
   late List<Coord> _faceLandmarks;
   late Size _containerDimension;
   late Size _scaledImageSize;
@@ -33,6 +36,9 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
     _faceLandmarks = landmarksProvider.getFaceLandmark
         .map((Coord c) => Coord.clone(c))
         .toList();
+
+    // get current pose
+    _currentPose = landmarksProvider.getCurrentPose ?? Poses.resting;
 
     // get rendered image size
     final imageSize = landmarksProvider.getCurrentImageSize;
@@ -121,9 +127,10 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(args.poseString),
-          actions: [
-            args.showMarker
-                ? ElevatedButton(
+          actions: args.showMarker
+              ? [
+                  ShowExampleButton(pose: _currentPose),
+                  ElevatedButton(
                     child: const Text('Save'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
@@ -138,8 +145,8 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
                       );
                     },
                   )
-                : Container(),
-          ],
+                ]
+              : null,
         ),
         body: InteractiveViewer(
           maxScale: 5,
