@@ -34,20 +34,12 @@ class FaceMarker extends StatelessWidget {
       top: _top,
       child: GestureDetector(
           onPanUpdate: _onPanUpdate,
-          child: Column(
+          child: Row(
             children: [
               Container(
                 width: _markerSize.toDouble() + (_markerInvisPadding * 2),
                 height: _markerSize.toDouble() + (_markerInvisPadding * 2),
                 padding: EdgeInsets.all(_markerInvisPadding),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    width: 1,
-                    color: Colors.grey.shade800,
-                    style: BorderStyle.solid,
-                  ),
-                ),
                 child: Container(
                   width: _markerSize.toDouble(),
                   height: _markerSize.toDouble(),
@@ -66,7 +58,7 @@ class FaceMarker extends StatelessWidget {
                   ? Text(
                       _mpid!.toString(),
                       style: const TextStyle(
-                        fontSize: 9,
+                        fontSize: 7.5,
                       ),
                     )
                   : Container(),

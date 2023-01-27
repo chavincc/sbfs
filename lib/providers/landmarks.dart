@@ -34,7 +34,7 @@ class Coord {
 
 class Landmarks with ChangeNotifier {
   int _markerSize = 7;
-  int _markerInvisPadding = 5;
+  int _markerInvisPadding = 2;
   Poses? _currentPose;
   Size? _currentImageSize;
   Size? _containerDimension;
