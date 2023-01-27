@@ -48,9 +48,10 @@ class Landmarks with ChangeNotifier {
       Coord(x: 0.2, y: 0.5, group: MarkerGroup.mouth, mpid: 67),
     ],
     Poses.browLift: [
-      Coord(x: 0.4, y: 0.5, group: MarkerGroup.brow, mpid: 120),
-      Coord(x: 0.5, y: 0.5, group: MarkerGroup.eye, mpid: 88),
-      Coord(x: 0.6, y: 0.5, group: MarkerGroup.mouth, mpid: 77),
+      Coord(x: 0.4, y: 0.5, group: MarkerGroup.brow, mpid: 105),
+      Coord(x: 0.5, y: 0.5, group: MarkerGroup.brow, mpid: 334),
+      Coord(x: 0.6, y: 0.5, group: MarkerGroup.eye, mpid: 468),
+      Coord(x: 0.6, y: 0.6, group: MarkerGroup.eye, mpid: 473),
     ]
   };
 
