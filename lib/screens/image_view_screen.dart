@@ -27,6 +27,7 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
 
   late int _markerSize;
   late int _markerInvisPadding;
+  bool _showMpid = false;
 
   @override
   void initState() {
@@ -87,6 +88,12 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
     Navigator.of(context).pop();
   }
 
+  void _toggleMpid() {
+    setState(() {
+      _showMpid = !_showMpid;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final args =
@@ -111,6 +118,7 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
               });
             },
             color: markerGroupColor[coord.group]!,
+            mpid: _showMpid ? coord.mpid : null,
           );
         },
       ).toList();
@@ -129,6 +137,13 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
           title: Text(args.poseString),
           actions: args.showMarker
               ? [
+                  ElevatedButton(
+                    onPressed: _toggleMpid,
+                    child: const Text('mpid'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey.shade600,
+                    ),
+                  ),
                   ShowExampleButton(pose: _currentPose),
                   ElevatedButton(
                     child: const Text('Save'),
@@ -144,7 +159,7 @@ class _ImageViewScreenState extends State<ImageViewScreen> {
                         _markerInvisPadding.toDouble(),
                       );
                     },
-                  )
+                  ),
                 ]
               : null,
         ),

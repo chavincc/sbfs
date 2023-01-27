@@ -23,23 +23,11 @@ class ShowExampleButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color.fromARGB(255, 255, 227, 102),
       ),
-      child: Row(
-        children: [
-          Container(
-            margin: const EdgeInsets.only(right: 6),
-            child: const Icon(
-              Icons.info_outline,
-              size: 18,
-              color: Color.fromARGB(255, 70, 70, 70),
-            ),
-          ),
-          const Text(
-            'Example',
-            style: TextStyle(
-              color: Color.fromARGB(255, 70, 70, 70),
-            ),
-          )
-        ],
+      child: const Text(
+        'Example',
+        style: TextStyle(
+          color: Color.fromARGB(255, 70, 70, 70),
+        ),
       ),
       onPressed: () {
         showModalBottomSheet<void>(

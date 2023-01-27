@@ -15,13 +15,20 @@ class Coord {
   double x = 0;
   double y = 0;
   MarkerGroup group = MarkerGroup.brow;
+  int mpid = 0;
 
-  Coord({required this.x, required this.y, required this.group});
+  Coord({
+    required this.x,
+    required this.y,
+    required this.group,
+    required this.mpid,
+  });
 
   Coord.clone(Coord other) {
     x = other.x;
     y = other.y;
     group = other.group;
+    mpid = other.mpid;
   }
 }
 
@@ -33,17 +40,17 @@ class Landmarks with ChangeNotifier {
   Size? _containerDimension;
   Map<Poses, List<Coord>> _faceLandmarks = {
     Poses.resting: [
-      Coord(x: 0, y: 0.3, group: MarkerGroup.eye),
-      Coord(x: 0.3, y: 0, group: MarkerGroup.eye),
-      Coord(x: 0.5, y: 0.5, group: MarkerGroup.eye),
-      Coord(x: 0.2, y: 0.3, group: MarkerGroup.mouth),
-      Coord(x: 0.2, y: 0.4, group: MarkerGroup.mouth),
-      Coord(x: 0.2, y: 0.5, group: MarkerGroup.mouth),
+      Coord(x: 0, y: 0.3, group: MarkerGroup.eye, mpid: 1),
+      Coord(x: 0.3, y: 0, group: MarkerGroup.eye, mpid: 2),
+      Coord(x: 0.5, y: 0.5, group: MarkerGroup.eye, mpid: 3),
+      Coord(x: 0.2, y: 0.3, group: MarkerGroup.mouth, mpid: 236),
+      Coord(x: 0.2, y: 0.4, group: MarkerGroup.mouth, mpid: 45),
+      Coord(x: 0.2, y: 0.5, group: MarkerGroup.mouth, mpid: 67),
     ],
     Poses.browLift: [
-      Coord(x: 0.4, y: 0.5, group: MarkerGroup.brow),
-      Coord(x: 0.5, y: 0.5, group: MarkerGroup.eye),
-      Coord(x: 0.6, y: 0.5, group: MarkerGroup.mouth),
+      Coord(x: 0.4, y: 0.5, group: MarkerGroup.brow, mpid: 120),
+      Coord(x: 0.5, y: 0.5, group: MarkerGroup.eye, mpid: 88),
+      Coord(x: 0.6, y: 0.5, group: MarkerGroup.mouth, mpid: 77),
     ]
   };
 

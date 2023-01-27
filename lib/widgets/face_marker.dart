@@ -7,6 +7,7 @@ class FaceMarker extends StatelessWidget {
   final double _markerInvisPadding;
   final void Function(DragUpdateDetails)? _onPanUpdate;
   final Color _color;
+  final int? _mpid;
 
   const FaceMarker(
       {required double left,
@@ -15,6 +16,7 @@ class FaceMarker extends StatelessWidget {
       required double markerInvisPadding,
       void Function(DragUpdateDetails)? onPanUpdate,
       Color color = Colors.black,
+      int? mpid,
       Key? key})
       : _left = left,
         _top = top,
@@ -22,6 +24,7 @@ class FaceMarker extends StatelessWidget {
         _markerInvisPadding = markerInvisPadding,
         _onPanUpdate = onPanUpdate,
         _color = color,
+        _mpid = mpid,
         super(key: key);
 
   @override
@@ -30,34 +33,45 @@ class FaceMarker extends StatelessWidget {
       left: _left,
       top: _top,
       child: GestureDetector(
-        onPanUpdate: _onPanUpdate,
-        child: Container(
-          width: _markerSize.toDouble() + (_markerInvisPadding * 2),
-          height: _markerSize.toDouble() + (_markerInvisPadding * 2),
-          padding: EdgeInsets.all(_markerInvisPadding),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              width: 1,
-              color: Colors.grey.shade800,
-              style: BorderStyle.solid,
-            ),
-          ),
-          child: Container(
-            width: _markerSize.toDouble(),
-            height: _markerSize.toDouble(),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: _color,
-              border: Border.all(
-                width: 1,
-                color: Colors.black,
-                style: BorderStyle.solid,
+          onPanUpdate: _onPanUpdate,
+          child: Column(
+            children: [
+              Container(
+                width: _markerSize.toDouble() + (_markerInvisPadding * 2),
+                height: _markerSize.toDouble() + (_markerInvisPadding * 2),
+                padding: EdgeInsets.all(_markerInvisPadding),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    width: 1,
+                    color: Colors.grey.shade800,
+                    style: BorderStyle.solid,
+                  ),
+                ),
+                child: Container(
+                  width: _markerSize.toDouble(),
+                  height: _markerSize.toDouble(),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _color,
+                    border: Border.all(
+                      width: 1,
+                      color: Colors.black,
+                      style: BorderStyle.solid,
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
-      ),
+              _mpid != null
+                  ? Text(
+                      _mpid!.toString(),
+                      style: const TextStyle(
+                        fontSize: 9,
+                      ),
+                    )
+                  : Container(),
+            ],
+          )),
     );
   }
 }
