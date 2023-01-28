@@ -5,9 +5,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../screens/camera_screen.dart';
-import '../models/scores.dart';
 import '../compute/face_brightness.dart';
 import '../config/http.dart';
+import '../providers/landmarks.dart';
 
 enum Poses { resting, browLift, eyesClose, snarl, smile, lipPucker }
 
@@ -101,13 +101,16 @@ class Faces with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<ScoreInstance> computeScore(
-      BuildContext context, String userInputId) async {
+  Future<FaceLandmarkResponse> readFaceLandmark(
+    BuildContext context,
+    String userInputId,
+  ) async {
     _fetching = true;
     notifyListeners();
-    ScoreInstance scoreInstance = {};
+    FaceLandmarkResponse faceLandmarkResponse =
+        const FaceLandmarkResponse(faceLandmarks: {}, uid: '');
     try {
-      final url = Uri.parse('$endpointUrl/grade_faces');
+      final url = Uri.parse('$endpointUrl/face_landmark');
       final request = http.MultipartRequest('POST', url);
 
       for (Poses pose in Poses.values) {
@@ -123,7 +126,7 @@ class Faces with ChangeNotifier {
       request.fields['affectedSide'] =
           _affectedSide == AffectedSide.left ? 'L' : 'R';
       request.fields['hasEyeSurgery'] = _haveEyeSurgery ? '1' : '0';
-      request.fields['userInputId'] = userInputId;
+      request.fields['uid'] = userInputId;
 
       _patientId = userInputId;
 
@@ -131,8 +134,7 @@ class Faces with ChangeNotifier {
       if (response.statusCode == 200) {
         final respStr = await response.stream.bytesToString();
         final parsed = jsonDecode(respStr);
-        final faceScoreResponse = FaceScoreResponse.fromJson(parsed);
-        scoreInstance = faceScoreResponse.scoreInstance;
+        faceLandmarkResponse = FaceLandmarkResponse.fromJson(parsed);
       } else {
         await _showErrorDialog(
           context,
@@ -151,7 +153,7 @@ class Faces with ChangeNotifier {
     _fetching = false;
     notifyListeners();
 
-    return scoreInstance;
+    return faceLandmarkResponse;
   }
 }
 
@@ -174,28 +176,44 @@ Future _showErrorDialog(
   );
 }
 
-class FaceScoreResponse {
-  final ScoreInstance scoreInstance;
+class FaceLandmarkResponse {
+  final Map<Poses, List<Coord>> faceLandmarks;
+  final String uid;
 
-  const FaceScoreResponse({
-    required this.scoreInstance,
+  static Map<Poses, String> pose2respKey = {
+    Poses.resting: 'rest',
+    Poses.browLift: 'brow',
+    Poses.eyesClose: 'eye',
+    Poses.smile: 'smile',
+    Poses.snarl: 'snarl',
+    Poses.lipPucker: 'lip',
+  };
+
+  const FaceLandmarkResponse({
+    required this.faceLandmarks,
+    required this.uid,
   });
 
-  factory FaceScoreResponse.fromJson(List<dynamic> json) {
-    return FaceScoreResponse(scoreInstance: {
-      'Eye': json[0][0][0],
-      'Nasolabial': json[0][0][1],
-      'Mouth': json[0][0][2],
-      'Brow Lift': json[0][1][0],
-      'Gentle Eye Closure': json[0][1][1],
-      'Open Mouth Smile': json[0][1][2],
-      'Snarl': json[0][1][3],
-      'Lip Pucker': json[0][1][4],
-      'Brow Lift Synkinesis': json[0][2][0],
-      'Gentle Eye Closure Synkinesis': json[0][2][1],
-      'Open Mouth Smile Synkinesis': json[0][2][2],
-      'Snarl Synkinesis': json[0][2][3],
-      'Lip Pucker Synkinesis': json[0][2][4],
-    });
+  factory FaceLandmarkResponse.fromJson(Map<dynamic, dynamic> json) {
+    // map response landmark to dart landmark for each post
+    Map<Poses, List<Coord>> convertedLandmarks = {};
+    for (var pose in Poses.values) {
+      convertedLandmarks[pose] = json['landmarks'][pose2respKey[pose]]
+          .map(
+            (dynamic c) => Coord(
+              x: c['x'],
+              y: c['y'],
+              group: MarkerGroup.brow,
+              mpid: c['mpid'],
+            ),
+          )
+          .toList()
+          .cast<Coord>();
+    }
+
+    return FaceLandmarkResponse(
+      uid: json['uid'],
+      faceLandmarks: convertedLandmarks,
+    );
   }
 }

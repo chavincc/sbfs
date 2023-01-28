@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sbfs/widgets/affected_side_input.dart';
 
 import '../providers/faces.dart';
-import '../providers/scores.dart';
+import '../providers/landmarks.dart';
 import '../widgets/image_display.dart';
 import '../screens/image_view_screen.dart';
 import '../screens/marker_screen.dart';
@@ -35,7 +35,7 @@ class _PosesScreenState extends State<PosesScreen> {
   @override
   Widget build(BuildContext context) {
     final facesProvider = Provider.of<Faces>(context);
-    final scoresProvider = Provider.of<Scores>(context, listen: false);
+    final landmarksProvider = Provider.of<Landmarks>(context, listen: false);
 
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -138,9 +138,10 @@ class _PosesScreenState extends State<PosesScreen> {
                   onPressed: facesProvider.isFetching || _poseImageIsIncomplete
                       ? null
                       : () async {
-                          final _scoreInstance = await facesProvider
-                              .computeScore(context, controller.text);
-                          scoresProvider.setSunnyBrookScore(_scoreInstance);
+                          final _faceLandmarkInstance = await facesProvider
+                              .readFaceLandmark(context, controller.text);
+                          landmarksProvider.setFaceLandmark(
+                              _faceLandmarkInstance.faceLandmarks);
                           Navigator.of(context)
                               .pushNamed(MarkerScreen.routeName);
                         },

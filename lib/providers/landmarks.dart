@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import './faces.dart';
 import '../models/size.dart';
+import '../models/scores.dart';
 
 enum MarkerGroup { brow, eye, mouth }
 
@@ -38,22 +39,7 @@ class Landmarks with ChangeNotifier {
   Poses? _currentPose;
   Size? _currentImageSize;
   Size? _containerDimension;
-  Map<Poses, List<Coord>> _faceLandmarks = {
-    Poses.resting: [
-      Coord(x: 0, y: 0.3, group: MarkerGroup.eye, mpid: 1),
-      Coord(x: 0.3, y: 0, group: MarkerGroup.eye, mpid: 2),
-      Coord(x: 0.5, y: 0.5, group: MarkerGroup.eye, mpid: 3),
-      Coord(x: 0.2, y: 0.3, group: MarkerGroup.mouth, mpid: 236),
-      Coord(x: 0.2, y: 0.4, group: MarkerGroup.mouth, mpid: 45),
-      Coord(x: 0.2, y: 0.5, group: MarkerGroup.mouth, mpid: 67),
-    ],
-    Poses.browLift: [
-      Coord(x: 0.4, y: 0.5, group: MarkerGroup.brow, mpid: 105),
-      Coord(x: 0.5, y: 0.5, group: MarkerGroup.brow, mpid: 334),
-      Coord(x: 0.6, y: 0.5, group: MarkerGroup.eye, mpid: 468),
-      Coord(x: 0.6, y: 0.6, group: MarkerGroup.eye, mpid: 473),
-    ]
-  };
+  Map<Poses, List<Coord>> _faceLandmarks = {};
 
   List<Coord> get getFaceLandmark => (_faceLandmarks.containsKey(_currentPose))
       ? _faceLandmarks[_currentPose]!
@@ -85,9 +71,44 @@ class Landmarks with ChangeNotifier {
     notifyListeners();
   }
 
+  void setFaceLandmark(Map<Poses, List<Coord>> faceLandmarks) {
+    _faceLandmarks = faceLandmarks;
+    notifyListeners();
+  }
+
   void saveFaceLandmark(List<Coord> newCoordList) {
     if (_currentPose != null) {
       _faceLandmarks[_currentPose!] = newCoordList;
     }
+  }
+
+  Future<FaceScoreResponse> gradeFaceFromAdjustedLandmark() async {
+    return FaceScoreResponse(scoreInstance: {});
+  }
+}
+
+class FaceScoreResponse {
+  final ScoreInstance scoreInstance;
+
+  const FaceScoreResponse({
+    required this.scoreInstance,
+  });
+
+  factory FaceScoreResponse.fromJson(List<dynamic> json) {
+    return FaceScoreResponse(scoreInstance: {
+      'Eye': json[0][0][0],
+      'Nasolabial': json[0][0][1],
+      'Mouth': json[0][0][2],
+      'Brow Lift': json[0][1][0],
+      'Gentle Eye Closure': json[0][1][1],
+      'Open Mouth Smile': json[0][1][2],
+      'Snarl': json[0][1][3],
+      'Lip Pucker': json[0][1][4],
+      'Brow Lift Synkinesis': json[0][2][0],
+      'Gentle Eye Closure Synkinesis': json[0][2][1],
+      'Open Mouth Smile Synkinesis': json[0][2][2],
+      'Snarl Synkinesis': json[0][2][3],
+      'Lip Pucker Synkinesis': json[0][2][4],
+    });
   }
 }
