@@ -142,6 +142,7 @@ class _PosesScreenState extends State<PosesScreen> {
                               .readFaceLandmark(context, controller.text);
                           landmarksProvider.setFaceLandmark(
                               _faceLandmarkInstance.faceLandmarks);
+                          landmarksProvider.setUid(_faceLandmarkInstance.uid);
                           Navigator.of(context)
                               .pushNamed(MarkerScreen.routeName);
                         },
