@@ -8,6 +8,7 @@ import '../screens/camera_screen.dart';
 import '../compute/face_brightness.dart';
 import '../config/http.dart';
 import '../providers/landmarks.dart';
+import '../widgets/error_dialog.dart';
 
 enum Poses { resting, browLift, eyesClose, snarl, smile, lipPucker }
 
@@ -136,14 +137,14 @@ class Faces with ChangeNotifier {
         final parsed = jsonDecode(respStr);
         faceLandmarkResponse = FaceLandmarkResponse.fromJson(parsed);
       } else {
-        await _showErrorDialog(
+        await showErrorDialog(
           context,
           'There is something wrong from our side',
           'Server error with status code ${response.statusCode}',
         );
       }
     } catch (error) {
-      await _showErrorDialog(
+      await showErrorDialog(
         context,
         'There is something wrong from our side',
         'Error occurred on client side',
@@ -155,25 +156,6 @@ class Faces with ChangeNotifier {
 
     return faceLandmarkResponse;
   }
-}
-
-Future _showErrorDialog(
-    BuildContext context, String title, String detail) async {
-  return showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(title),
-        content: Text(detail),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('close'),
-          ),
-        ],
-      );
-    },
-  );
 }
 
 class FaceLandmarkResponse {
