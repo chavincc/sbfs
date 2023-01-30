@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import './faces.dart';
 import '../models/size.dart';
 import '../models/scores.dart';
+import '../models/poses.dart';
+import '../config/http.dart';
+import '../widgets/error_dialog.dart';
 
 enum MarkerGroup { brow, eye, mouth }
 
@@ -34,12 +39,16 @@ class Coord {
 }
 
 class Landmarks with ChangeNotifier {
+  bool _fetching = true;
   int _markerSize = 7;
   int _markerInvisPadding = 2;
   Poses? _currentPose;
   Size? _currentImageSize;
   Size? _containerDimension;
   Map<Poses, List<Coord>> _faceLandmarks = {};
+  String? _uid;
+
+  bool get isFetching => _fetching;
 
   List<Coord> get getFaceLandmark => (_faceLandmarks.containsKey(_currentPose))
       ? _faceLandmarks[_currentPose]!
@@ -76,14 +85,86 @@ class Landmarks with ChangeNotifier {
     notifyListeners();
   }
 
+  void setUid(String uid) {
+    _uid = uid;
+    notifyListeners();
+  }
+
   void saveFaceLandmark(List<Coord> newCoordList) {
     if (_currentPose != null) {
       _faceLandmarks[_currentPose!] = newCoordList;
     }
   }
 
-  Future<FaceScoreResponse> gradeFaceFromAdjustedLandmark() async {
-    return FaceScoreResponse(scoreInstance: {});
+  Future<FaceScoreResponse> gradeFaceFromAdjustedLandmark(
+    BuildContext context,
+    String affectedSide,
+    String hasEyeSurgery,
+  ) async {
+    _fetching = true;
+    notifyListeners();
+
+    FaceScoreResponse faceScoreResponse =
+        const FaceScoreResponse(scoreInstance: {});
+    try {
+      final url = Uri.parse('$endpointUrl/correct_landmark_grade_faces');
+      final headers = <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      };
+
+      // transform marker to request body
+      final Map<String, List<Map<String, dynamic>>> landmarkRequestBody = {};
+      for (Poses p in Poses.values) {
+        if (_faceLandmarks.containsKey(p)) {
+          final String reqKey = pose2respKey[p]!;
+          final respLandmark = _faceLandmarks[p]!
+              .map(
+                (Coord c) => ({
+                  "x": c.x,
+                  "y": c.y,
+                  "group": '',
+                  "mpid": c.mpid,
+                }),
+              )
+              .toList();
+          landmarkRequestBody[reqKey] = respLandmark;
+        }
+      }
+
+      final body = json.encode({
+        "uid": _uid ?? '',
+        "affectedSide": affectedSide,
+        "hasEyeSurgery": hasEyeSurgery,
+        "landmarks": landmarkRequestBody,
+      });
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: body,
+      );
+      if (response.statusCode == 200) {
+        final respStr = response.body;
+        final parsed = jsonDecode(respStr);
+        faceScoreResponse = FaceScoreResponse.fromJson(parsed);
+      } else {
+        await showErrorDialog(
+          context,
+          'There is something wrong from our side',
+          'Server error with status code ${response.statusCode}',
+        );
+      }
+    } catch (error) {
+      await showErrorDialog(
+        context,
+        'There is something wrong from our side',
+        'Error occurred on client side',
+      );
+    }
+
+    _fetching = false;
+    notifyListeners();
+
+    return faceScoreResponse;
   }
 }
 

@@ -4,6 +4,7 @@ import 'package:sbfs/screens/score_display_screen.dart';
 
 import '../providers/faces.dart';
 import '../providers/landmarks.dart';
+import '../providers/scores.dart';
 import '../widgets/image_display.dart';
 import '../screens/image_view_screen.dart';
 import '../models/size.dart';
@@ -22,6 +23,7 @@ class _MarkerScreenState extends State<MarkerScreen> {
   Widget build(BuildContext context) {
     final facesProvider = Provider.of<Faces>(context);
     final landmarksProvider = Provider.of<Landmarks>(context, listen: false);
+    final scoresProvider = Provider.of<Scores>(context, listen: false);
 
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -124,13 +126,28 @@ class _MarkerScreenState extends State<MarkerScreen> {
                   onPressed: facesProvider.isFetching
                       ? null
                       : () async {
+                          final affectedSideStr =
+                              facesProvider.getAffectedSide == AffectedSide.left
+                                  ? 'L'
+                                  : 'R';
+                          final hasEyeSurgeryStr =
+                              facesProvider.haveEyeSurgery ? '1' : '0';
+                          final faceScoreResponse = await landmarksProvider
+                              .gradeFaceFromAdjustedLandmark(
+                            context,
+                            affectedSideStr,
+                            hasEyeSurgeryStr,
+                          );
+                          scoresProvider.setSunnyBrookScore(
+                              faceScoreResponse.scoreInstance);
+
                           Navigator.of(context)
                               .pushNamed(ScoreDisplayScreen.routeName);
                         },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      facesProvider.isFetching
+                      landmarksProvider.isFetching
                           ? Container(
                               height: 20,
                               width: 20,
