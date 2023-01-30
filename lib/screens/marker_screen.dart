@@ -22,7 +22,7 @@ class _MarkerScreenState extends State<MarkerScreen> {
   @override
   Widget build(BuildContext context) {
     final facesProvider = Provider.of<Faces>(context);
-    final landmarksProvider = Provider.of<Landmarks>(context, listen: false);
+    final landmarksProvider = Provider.of<Landmarks>(context);
     final scoresProvider = Provider.of<Scores>(context, listen: false);
 
     final screenWidth = MediaQuery.of(context).size.width;
@@ -123,7 +123,7 @@ class _MarkerScreenState extends State<MarkerScreen> {
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                   ),
-                  onPressed: facesProvider.isFetching
+                  onPressed: landmarksProvider.isFetching
                       ? null
                       : () async {
                           final affectedSideStr =

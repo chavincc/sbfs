@@ -39,7 +39,7 @@ class Coord {
 }
 
 class Landmarks with ChangeNotifier {
-  bool _fetching = true;
+  bool _fetching = false;
   int _markerSize = 7;
   int _markerInvisPadding = 2;
   Poses? _currentPose;
