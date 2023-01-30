@@ -7,6 +7,7 @@ import 'dart:convert';
 import '../screens/camera_screen.dart';
 import '../compute/face_brightness.dart';
 import '../config/http.dart';
+import '../models/poses.dart';
 import '../providers/landmarks.dart';
 import '../widgets/error_dialog.dart';
 
@@ -161,15 +162,6 @@ class Faces with ChangeNotifier {
 class FaceLandmarkResponse {
   final Map<Poses, List<Coord>> faceLandmarks;
   final String uid;
-
-  static Map<Poses, String> pose2respKey = {
-    Poses.resting: 'rest',
-    Poses.browLift: 'brow',
-    Poses.eyesClose: 'eye',
-    Poses.smile: 'smile',
-    Poses.snarl: 'snarl',
-    Poses.lipPucker: 'lip',
-  };
 
   const FaceLandmarkResponse({
     required this.faceLandmarks,
