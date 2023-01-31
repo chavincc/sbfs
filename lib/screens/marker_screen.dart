@@ -1,63 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sbfs/widgets/affected_side_input.dart';
+import 'package:sbfs/screens/score_display_screen.dart';
 
 import '../providers/faces.dart';
 import '../providers/landmarks.dart';
+import '../providers/scores.dart';
 import '../widgets/image_display.dart';
 import '../screens/image_view_screen.dart';
-import '../screens/marker_screen.dart';
+import '../models/size.dart';
 
-const _debug = true;
+class MarkerScreen extends StatefulWidget {
+  static String routeName = '/marker';
 
-class PosesScreen extends StatefulWidget {
-  static String routeName = '/';
-
-  const PosesScreen({Key? key}) : super(key: key);
+  const MarkerScreen({Key? key}) : super(key: key);
 
   @override
-  State<PosesScreen> createState() => _PosesScreenState();
+  State<MarkerScreen> createState() => _MarkerScreenState();
 }
 
-class _PosesScreenState extends State<PosesScreen> {
-  late TextEditingController controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
+class _MarkerScreenState extends State<MarkerScreen> {
   @override
   Widget build(BuildContext context) {
     final facesProvider = Provider.of<Faces>(context);
-    final landmarksProvider = Provider.of<Landmarks>(context, listen: false);
+    final landmarksProvider = Provider.of<Landmarks>(context);
+    final scoresProvider = Provider.of<Scores>(context, listen: false);
 
     final screenWidth = MediaQuery.of(context).size.width;
-
-    final _poseImageIsIncomplete = facesProvider.getPosesPhoto.length != 6 ||
-        facesProvider.getPosesPhoto.values.contains(null) ||
-        facesProvider.getAffectedSide == null;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenStatusBarPadding = MediaQuery.of(context).padding.top;
+    final appBarHeight = AppBar().preferredSize.height;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Facial Paralysis Scoring'),
-        actions: [
-          _debug
-              ? IconButton(
-                  onPressed: () {
-                    facesProvider.useDebugFile();
-                  },
-                  icon: const Icon(Icons.bug_report),
-                )
-              : const SizedBox.shrink(),
-        ],
+        title: const Text('Adjust Face Landmark'),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -65,6 +40,18 @@ class _PosesScreenState extends State<PosesScreen> {
           padding: EdgeInsets.all(screenWidth * 0.1),
           child: Column(
             children: [
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 20),
+                child: Text(
+                  'view and adjust face landmarks by tapping on image if needed',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
               ...Poses.values
                   .map(
                     (pose) => Container(
@@ -86,13 +73,31 @@ class _PosesScreenState extends State<PosesScreen> {
                               if (facesProvider.getPosesPhoto[pose] == null) {
                                 facesProvider.startTakingPhoto(context, pose);
                               } else {
+                                landmarksProvider.setCurrentPose(pose);
+
+                                // get current image size for later marker transformation
+                                final file = facesProvider.getPosesPhoto[pose]!;
+                                final decodedImage = await decodeImageFromList(
+                                    file.readAsBytesSync());
+                                landmarksProvider.setCurrentImageSize(Size(
+                                  width: decodedImage.width.toDouble(),
+                                  height: decodedImage.height.toDouble(),
+                                ));
+                                // get screen size for later marker transformation
+                                landmarksProvider.setContainerDimension(Size(
+                                  width: screenWidth,
+                                  height: screenHeight -
+                                      appBarHeight -
+                                      screenStatusBarPadding,
+                                ));
+
                                 Navigator.of(context).pushNamed(
                                   ImageViewScreen.routeName,
                                   arguments: ImageViewScreenArguments(
                                     photoFile:
                                         facesProvider.getPosesPhoto[pose]!,
                                     poseString: _getPoseLabel(pose),
-                                    showMarker: false,
+                                    showMarker: true,
                                   ),
                                 );
                               }
@@ -104,6 +109,7 @@ class _PosesScreenState extends State<PosesScreen> {
                               },
                               height: screenWidth * 0.8,
                               width: screenWidth * 0.8,
+                              enableCloseButton: false,
                             ),
                           ),
                         ],
@@ -111,57 +117,37 @@ class _PosesScreenState extends State<PosesScreen> {
                     ),
                   )
                   .toList(),
-              CheckboxListTile(
-                title: const Text(
-                  "Patient have eye surgery",
-                  style: TextStyle(
-                    fontSize: 17,
-                  ),
-                ),
-                value: facesProvider.haveEyeSurgery,
-                onChanged: (newValue) {
-                  if (newValue != null) {
-                    facesProvider.setEyeSurgeryValue(newValue);
-                  }
-                },
-                controlAffinity: ListTileControlAffinity.leading,
-              ),
-              AffectedSideInput(
-                value: facesProvider.getAffectedSide,
-                onSelectCallback: (side) {
-                  facesProvider.setAffectedSide(side);
-                },
-              ),
-              TextField(
-                decoration: const InputDecoration(
-                  hintText: 'Patient ID',
-                  border: OutlineInputBorder(),
-                ),
-                controller: controller,
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 20),
+              SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.green.shade500,
                     padding: const EdgeInsets.symmetric(vertical: 10),
                   ),
-                  onPressed: facesProvider.isFetching || _poseImageIsIncomplete
+                  onPressed: landmarksProvider.isFetching
                       ? null
                       : () async {
-                          final _faceLandmarkInstance = await facesProvider
-                              .readFaceLandmark(context, controller.text);
-                          landmarksProvider.setFaceLandmark(
-                              _faceLandmarkInstance.faceLandmarks);
-                          landmarksProvider.setUid(_faceLandmarkInstance.uid);
+                          final affectedSideStr =
+                              facesProvider.getAffectedSide == AffectedSide.left
+                                  ? 'L'
+                                  : 'R';
+                          final hasEyeSurgeryStr =
+                              facesProvider.haveEyeSurgery ? '1' : '0';
+                          final faceScoreResponse = await landmarksProvider
+                              .gradeFaceFromAdjustedLandmark(
+                            context,
+                            affectedSideStr,
+                            hasEyeSurgeryStr,
+                          );
+                          scoresProvider.setSunnyBrookScore(
+                              faceScoreResponse.scoreInstance);
+
                           Navigator.of(context)
-                              .pushNamed(MarkerScreen.routeName);
+                              .pushNamed(ScoreDisplayScreen.routeName);
                         },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      facesProvider.isFetching
+                      landmarksProvider.isFetching
                           ? Container(
                               height: 20,
                               width: 20,
@@ -172,7 +158,7 @@ class _PosesScreenState extends State<PosesScreen> {
                             )
                           : const SizedBox.shrink(),
                       const Text(
-                        'Submit',
+                        'Compute Score',
                         style: TextStyle(fontSize: 17),
                       ),
                     ],

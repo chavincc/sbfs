@@ -5,14 +5,14 @@ class ImageDisplay extends StatelessWidget {
   final double _width;
   final double _height;
   final File? _imageFile;
-  final VoidCallback _onClose;
+  final VoidCallback? _onClose;
   final bool _enableCloseButton;
 
   const ImageDisplay({
     double? width,
     double? height,
     File? imageFile,
-    required VoidCallback onClose,
+    VoidCallback? onClose,
     enableCloseButton = true,
     Key? key,
   })  : _width = width ?? 0,

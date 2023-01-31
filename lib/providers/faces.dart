@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../screens/camera_screen.dart';
-import '../models/scores.dart';
 import '../compute/face_brightness.dart';
 import '../config/http.dart';
+import '../models/poses.dart';
+import '../providers/landmarks.dart';
+import '../widgets/error_dialog.dart';
 
 enum Poses { resting, browLift, eyesClose, snarl, smile, lipPucker }
 
@@ -52,6 +56,17 @@ class Faces with ChangeNotifier {
     notifyListeners();
   }
 
+  Future useDebugFile() async {
+    final byteData = await rootBundle.load('images/example_face.jpg');
+    final file = File('${(await getTemporaryDirectory()).path}/debug-file.jpg');
+    await file.writeAsBytes(byteData.buffer
+        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    for (Poses p in Poses.values) {
+      _posesPhoto[p] = file;
+    }
+    notifyListeners();
+  }
+
   void startTakingPhoto(BuildContext context, Poses pose) {
     _currentPose = pose;
     Navigator.of(context).pushNamed(CameraScreen.routeName);
@@ -60,8 +75,8 @@ class Faces with ChangeNotifier {
   Future storePhoto(BuildContext context, XFile photoFile) async {
     // final _photo = File(photoFile.path);
 
-    _fetching = true;
-    notifyListeners();
+    // _fetching = true;
+    // notifyListeners();
     // final faceContour = await detectFaceContour(_photo);
     // if (faceContour == null) {
     //   await _showErrorDialog(context, 'Error', 'No face detected.');
@@ -79,8 +94,8 @@ class Faces with ChangeNotifier {
     // final brightnessIsDifference =
     //     compareFaceBrightnessLR(decodedImage, faceContour);
 
-    _fetching = false;
-    notifyListeners();
+    // _fetching = false;
+    // notifyListeners();
 
     if (_currentPose != null) {
       Navigator.of(context).pop();
@@ -101,13 +116,16 @@ class Faces with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<ScoreInstance> computeScore(
-      BuildContext context, String userInputId) async {
+  Future<FaceLandmarkResponse> readFaceLandmark(
+    BuildContext context,
+    String userInputId,
+  ) async {
     _fetching = true;
     notifyListeners();
-    ScoreInstance scoreInstance = {};
+    FaceLandmarkResponse faceLandmarkResponse =
+        const FaceLandmarkResponse(faceLandmarks: {}, uid: '');
     try {
-      final url = Uri.parse('$endpointUrl/grade_faces');
+      final url = Uri.parse('$endpointUrl/face_landmark');
       final request = http.MultipartRequest('POST', url);
 
       for (Poses pose in Poses.values) {
@@ -123,7 +141,7 @@ class Faces with ChangeNotifier {
       request.fields['affectedSide'] =
           _affectedSide == AffectedSide.left ? 'L' : 'R';
       request.fields['hasEyeSurgery'] = _haveEyeSurgery ? '1' : '0';
-      request.fields['userInputId'] = userInputId;
+      request.fields['uid'] = userInputId;
 
       _patientId = userInputId;
 
@@ -131,17 +149,16 @@ class Faces with ChangeNotifier {
       if (response.statusCode == 200) {
         final respStr = await response.stream.bytesToString();
         final parsed = jsonDecode(respStr);
-        final faceScoreResponse = FaceScoreResponse.fromJson(parsed);
-        scoreInstance = faceScoreResponse.scoreInstance;
+        faceLandmarkResponse = FaceLandmarkResponse.fromJson(parsed);
       } else {
-        await _showErrorDialog(
+        await showErrorDialog(
           context,
           'There is something wrong from our side',
           'Server error with status code ${response.statusCode}',
         );
       }
     } catch (error) {
-      await _showErrorDialog(
+      await showErrorDialog(
         context,
         'There is something wrong from our side',
         'Error occurred on client side',
@@ -151,51 +168,39 @@ class Faces with ChangeNotifier {
     _fetching = false;
     notifyListeners();
 
-    return scoreInstance;
+    return faceLandmarkResponse;
   }
 }
 
-Future _showErrorDialog(
-    BuildContext context, String title, String detail) async {
-  return showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(title),
-        content: Text(detail),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('close'),
-          ),
-        ],
-      );
-    },
-  );
-}
+class FaceLandmarkResponse {
+  final Map<Poses, List<Coord>> faceLandmarks;
+  final String uid;
 
-class FaceScoreResponse {
-  final ScoreInstance scoreInstance;
-
-  const FaceScoreResponse({
-    required this.scoreInstance,
+  const FaceLandmarkResponse({
+    required this.faceLandmarks,
+    required this.uid,
   });
 
-  factory FaceScoreResponse.fromJson(List<dynamic> json) {
-    return FaceScoreResponse(scoreInstance: {
-      'Eye': json[0][0][0],
-      'Nasolabial': json[0][0][1],
-      'Mouth': json[0][0][2],
-      'Brow Lift': json[0][1][0],
-      'Gentle Eye Closure': json[0][1][1],
-      'Open Mouth Smile': json[0][1][2],
-      'Snarl': json[0][1][3],
-      'Lip Pucker': json[0][1][4],
-      'Brow Lift Synkinesis': json[0][2][0],
-      'Gentle Eye Closure Synkinesis': json[0][2][1],
-      'Open Mouth Smile Synkinesis': json[0][2][2],
-      'Snarl Synkinesis': json[0][2][3],
-      'Lip Pucker Synkinesis': json[0][2][4],
-    });
+  factory FaceLandmarkResponse.fromJson(Map<dynamic, dynamic> json) {
+    // map response landmark to dart landmark for each post
+    Map<Poses, List<Coord>> convertedLandmarks = {};
+    for (var pose in Poses.values) {
+      convertedLandmarks[pose] = json['landmarks'][pose2respKey[pose]]
+          .map(
+            (dynamic c) => Coord(
+              x: c['x'],
+              y: c['y'],
+              group: MarkerGroup.brow,
+              mpid: c['mpid'],
+            ),
+          )
+          .toList()
+          .cast<Coord>();
+    }
+
+    return FaceLandmarkResponse(
+      uid: json['uid'],
+      faceLandmarks: convertedLandmarks,
+    );
   }
 }
