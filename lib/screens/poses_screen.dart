@@ -8,6 +8,8 @@ import '../widgets/image_display.dart';
 import '../screens/image_view_screen.dart';
 import '../screens/marker_screen.dart';
 
+const _debug = true;
+
 class PosesScreen extends StatefulWidget {
   static String routeName = '/';
 
@@ -46,6 +48,16 @@ class _PosesScreenState extends State<PosesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Facial Paralysis Scoring'),
+        actions: [
+          _debug
+              ? IconButton(
+                  onPressed: () {
+                    facesProvider.useDebugFile();
+                  },
+                  icon: const Icon(Icons.bug_report),
+                )
+              : const SizedBox.shrink(),
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(

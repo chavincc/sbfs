@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../screens/camera_screen.dart';
 import '../compute/face_brightness.dart';
@@ -51,6 +53,17 @@ class Faces with ChangeNotifier {
 
   void setAffectedSide(AffectedSide? side) {
     _affectedSide = side;
+    notifyListeners();
+  }
+
+  Future useDebugFile() async {
+    final byteData = await rootBundle.load('images/example_face.jpg');
+    final file = File('${(await getTemporaryDirectory()).path}/debug-file.jpg');
+    await file.writeAsBytes(byteData.buffer
+        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    for (Poses p in Poses.values) {
+      _posesPhoto[p] = file;
+    }
     notifyListeners();
   }
 
