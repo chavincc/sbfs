@@ -65,6 +65,8 @@ class Landmarks with ChangeNotifier {
   int get getMarkerSize => _markerSize;
   int get getMarkerInvisPadding => _markerInvisPadding;
 
+  String? get getUid => _uid;
+
   void setCurrentPose(Poses pose) {
     _currentPose = pose;
     notifyListeners();
@@ -176,20 +178,8 @@ class FaceScoreResponse {
   });
 
   factory FaceScoreResponse.fromJson(List<dynamic> json) {
-    return FaceScoreResponse(scoreInstance: {
-      'Eye': json[0][0][0],
-      'Nasolabial': json[0][0][1],
-      'Mouth': json[0][0][2],
-      'Brow Lift': json[0][1][0],
-      'Gentle Eye Closure': json[0][1][1],
-      'Open Mouth Smile': json[0][1][2],
-      'Snarl': json[0][1][3],
-      'Lip Pucker': json[0][1][4],
-      'Brow Lift Synkinesis': json[0][2][0],
-      'Gentle Eye Closure Synkinesis': json[0][2][1],
-      'Open Mouth Smile Synkinesis': json[0][2][2],
-      'Snarl Synkinesis': json[0][2][3],
-      'Lip Pucker Synkinesis': json[0][2][4],
-    });
+    return FaceScoreResponse(
+      scoreInstance: json2scoreInstance(json),
+    );
   }
 }
