@@ -8,6 +8,7 @@ import 'package:sbfs/models/scores.dart';
 import '../result_pdf/result_pdf.dart';
 import '../providers/faces.dart';
 import '../providers/scores.dart';
+import '../providers/landmarks.dart';
 import '../widgets/score_title.dart';
 import '../widgets/multiple_choice_display.dart';
 import '../widgets/scale_display.dart';
@@ -24,6 +25,7 @@ class ScoreDisplayScreen extends StatelessWidget {
     final _scoreProvider = Provider.of<Scores>(context);
     final _scoreInstance = _scoreProvider.getSunnyBrookScore;
     final _facesProvider = Provider.of<Faces>(context, listen: false);
+    final _landmarksProvider = Provider.of<Landmarks>(context, listen: false);
 
     final _restingTotalScore = _scoreProvider.getGroupSumScore('Resting');
     final _voluntaryMovementTotalScore =
@@ -34,25 +36,36 @@ class ScoreDisplayScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Score'),
         actions: [
-          IconButton(
+          ElevatedButton(
             onPressed: () async {
-              final resultPdf = buildResultPdf(
-                _facesProvider.getPosesPhoto,
-                _facesProvider.getPatientId,
-                _facesProvider.getAffectedSide,
-                _facesProvider.haveEyeSurgery,
-                _scoreInstance,
-                _restingTotalScore,
-                _voluntaryMovementTotalScore,
-                _synkinesisTotalScore,
-              );
-              final output = await getApplicationDocumentsDirectory();
-              final file = File("${output.path}/example.pdf");
-              final bytes = await resultPdf.save();
-              await file.writeAsBytes(bytes);
-              await OpenFilex.open((file.path));
+              final updateStorageSuccess = await _scoreProvider
+                  .updateScoreStorage(context, _landmarksProvider.getUid ?? '');
+              if (updateStorageSuccess) {
+                final resultPdf = buildResultPdf(
+                  _facesProvider.getPosesPhoto,
+                  _facesProvider.getPatientId,
+                  _facesProvider.getAffectedSide,
+                  _facesProvider.haveEyeSurgery,
+                  _scoreInstance,
+                  _restingTotalScore,
+                  _voluntaryMovementTotalScore,
+                  _synkinesisTotalScore,
+                );
+                final output = await getApplicationDocumentsDirectory();
+                final file = File("${output.path}/example.pdf");
+                final bytes = await resultPdf.save();
+                await file.writeAsBytes(bytes);
+                await OpenFilex.open((file.path));
+              }
             },
-            icon: const Icon(Icons.download),
+            child: Row(
+              children: _scoreProvider.isFetching
+                  ? const [Text('Saving..')]
+                  : const [
+                      Icon(Icons.download),
+                      Text('Save'),
+                    ],
+            ),
           )
         ],
       ),
