@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sbfs/screens/score_display_screen.dart';
 
 import '../providers/faces.dart';
 import '../providers/landmarks.dart';
 import '../providers/scores.dart';
 import '../widgets/image_display.dart';
+import '../widgets/text_copy_display.dart';
 import '../screens/image_view_screen.dart';
+import '../screens/score_display_screen.dart';
 import '../models/size.dart';
 
 class MarkerScreen extends StatefulWidget {
@@ -19,6 +20,8 @@ class MarkerScreen extends StatefulWidget {
 }
 
 class _MarkerScreenState extends State<MarkerScreen> {
+  final bool _showUid = true;
+
   @override
   Widget build(BuildContext context) {
     final facesProvider = Provider.of<Faces>(context);
@@ -40,6 +43,16 @@ class _MarkerScreenState extends State<MarkerScreen> {
           padding: EdgeInsets.all(screenWidth * 0.1),
           child: Column(
             children: [
+              _showUid
+                  ? Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(bottom: 20),
+                      child: TextCopyDisplay(
+                        label: 'uid',
+                        value: landmarksProvider.getUid ?? '',
+                      ),
+                    )
+                  : const SizedBox.shrink(),
               Container(
                 width: double.infinity,
                 margin: const EdgeInsets.only(bottom: 20),
