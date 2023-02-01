@@ -13,7 +13,7 @@ import '../models/poses.dart';
 import '../providers/landmarks.dart';
 import '../widgets/error_dialog.dart';
 
-enum Poses { resting, browLift, eyesClose, snarl, smile, lipPucker }
+enum Poses { resting, browLift, eyesClose, smile, snarl, lipPucker }
 
 enum AffectedSide { left, right }
 
