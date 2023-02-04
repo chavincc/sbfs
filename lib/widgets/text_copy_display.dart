@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class TextCopyDisplay extends StatelessWidget {
+  static int valueTrimLength = 20;
   final String _label;
   final String _value;
 
@@ -13,11 +14,15 @@ class TextCopyDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final displayValue = (_value.length > valueTrimLength)
+        ? '${_value.substring(0, valueTrimLength)}...'
+        : _value;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          '$_label : $_value',
+          '$_label : $displayValue',
           style: TextStyle(
             fontSize: 16,
             color: Colors.grey[600],
