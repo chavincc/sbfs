@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sbfs/widgets/affected_side_input.dart';
 
@@ -133,11 +134,25 @@ class _PosesScreenState extends State<PosesScreen> {
                 },
               ),
               TextField(
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9_]"))
+                ],
                 decoration: const InputDecoration(
                   hintText: 'Patient ID',
                   border: OutlineInputBorder(),
                 ),
                 controller: controller,
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 5),
+                width: double.infinity,
+                child: Text(
+                  'only a-z, A-Z, 0-9, and underscore (_) is allowed',
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
               ),
               Container(
                 margin: const EdgeInsets.only(top: 20),
