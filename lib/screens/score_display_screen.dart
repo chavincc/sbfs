@@ -38,6 +38,7 @@ class ScoreDisplayScreen extends StatelessWidget {
           _scoreProvider.reset();
           _facesProvider.reset();
           _facesProvider.reset();
+          Navigator.of(context).popUntil((route) => route.isFirst);
         },
         label: const Text('new case'),
         icon: const Icon(Icons.face_retouching_natural),
