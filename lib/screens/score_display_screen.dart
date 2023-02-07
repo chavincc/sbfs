@@ -75,6 +75,32 @@ class ScoreDisplayScreen extends StatelessWidget {
           padding: const EdgeInsets.all(30),
           child: Column(
             children: [
+              canEditScore
+                  ? Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(bottom: 20),
+                      child: Text(
+                        'tap on score to adjust.',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[600],
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 20),
+                child: Text(
+                  'press save to generate pdf report.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
               const ScoreTitle(text: 'Resting'),
               ...titleGroup['Resting']!
                   .map(
