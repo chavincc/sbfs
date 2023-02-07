@@ -166,7 +166,7 @@ class _PosesScreenState extends State<PosesScreen> {
                       ? null
                       : () async {
                           final _faceLandmarkInstance = await facesProvider
-                              .readFaceLandmark(context, controller.text);
+                              .readFaceLandmark(context, controller);
                           landmarksProvider.setFaceLandmark(
                               _faceLandmarkInstance.faceLandmarks);
                           landmarksProvider.setUid(_faceLandmarkInstance.uid);

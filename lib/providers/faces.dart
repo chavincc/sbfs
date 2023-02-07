@@ -31,8 +31,21 @@ class Faces with ChangeNotifier {
   bool _haveEyeSurgery = false;
   Poses? _currentPose;
   AffectedSide? _affectedSide;
-  final Map<Poses, File?> _posesPhoto = {};
-  String? _patientId;
+  Map<Poses, File?> _posesPhoto = {};
+  TextEditingController? _patientIdController;
+
+  void reset() {
+    _fetching = false;
+    _haveEyeSurgery = false;
+    _currentPose = null;
+    _affectedSide = null;
+    _posesPhoto = {};
+    if (_patientIdController != null) {
+      _patientIdController!.clear();
+    }
+    _patientIdController = null;
+    notifyListeners();
+  }
 
   Map<Poses, File?> get getPosesPhoto => _posesPhoto;
 
@@ -44,7 +57,8 @@ class Faces with ChangeNotifier {
 
   bool get isFetching => _fetching;
 
-  String? get getPatientId => _patientId;
+  String? get getPatientId =>
+      (_patientIdController != null) ? _patientIdController!.text : null;
 
   void setEyeSurgeryValue(bool value) {
     _haveEyeSurgery = value;
@@ -118,7 +132,7 @@ class Faces with ChangeNotifier {
 
   Future<FaceLandmarkResponse> readFaceLandmark(
     BuildContext context,
-    String userInputId,
+    TextEditingController userInputIdController,
   ) async {
     _fetching = true;
     notifyListeners();
@@ -141,9 +155,9 @@ class Faces with ChangeNotifier {
       request.fields['affectedSide'] =
           _affectedSide == AffectedSide.left ? 'L' : 'R';
       request.fields['hasEyeSurgery'] = _haveEyeSurgery ? '1' : '0';
-      request.fields['uid'] = userInputId;
+      request.fields['uid'] = userInputIdController.text;
 
-      _patientId = userInputId;
+      _patientIdController = userInputIdController;
 
       final response = await request.send();
       if (response.statusCode == 200) {

@@ -33,6 +33,15 @@ class ScoreDisplayScreen extends StatelessWidget {
     final _synkinesisTotalScore = _scoreProvider.getGroupSumScore('Synkinesis');
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          _scoreProvider.reset();
+          _facesProvider.reset();
+          _facesProvider.reset();
+        },
+        label: const Text('new case'),
+        icon: const Icon(Icons.face_retouching_natural),
+      ),
       appBar: AppBar(
         title: const Text('Score'),
         actions: [

@@ -48,6 +48,16 @@ class Landmarks with ChangeNotifier {
   Map<Poses, List<Coord>> _faceLandmarks = {};
   String? _uid;
 
+  void reset() {
+    _fetching = false;
+    _currentPose = null;
+    _currentImageSize = null;
+    _containerDimension = null;
+    _faceLandmarks = {};
+    _uid = null;
+    notifyListeners();
+  }
+
   bool get isFetching => _fetching;
 
   List<Coord> get getFaceLandmark => (_faceLandmarks.containsKey(_currentPose))

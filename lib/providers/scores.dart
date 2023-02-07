@@ -10,6 +10,12 @@ class Scores with ChangeNotifier {
   bool _fetching = false;
   ScoreInstance _sunnyBrookScore = {};
 
+  void reset() {
+    _fetching = false;
+    _sunnyBrookScore = {};
+    notifyListeners();
+  }
+
   ScoreInstance get getSunnyBrookScore => _sunnyBrookScore;
 
   int getGroupSumScore(String title) {
