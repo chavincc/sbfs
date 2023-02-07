@@ -33,16 +33,22 @@ class ScoreDisplayScreen extends StatelessWidget {
     final _synkinesisTotalScore = _scoreProvider.getGroupSumScore('Synkinesis');
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          _scoreProvider.reset();
-          _facesProvider.reset();
-          _facesProvider.reset();
-          Navigator.of(context).popUntil((route) => route.isFirst);
-        },
-        label: const Text('new case'),
-        icon: const Icon(Icons.face_retouching_natural),
-      ),
+      floatingActionButton: _scoreProvider.getHaveUnsavedChange
+          ? FloatingActionButton.extended(
+              onPressed: () {},
+              label: const Text('unsaved change(s)'),
+              backgroundColor: Colors.grey,
+            )
+          : FloatingActionButton.extended(
+              onPressed: () {
+                _scoreProvider.reset();
+                _facesProvider.reset();
+                _facesProvider.reset();
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+              label: const Text('new case'),
+              icon: const Icon(Icons.face_retouching_natural),
+            ),
       appBar: AppBar(
         title: const Text('Score'),
         actions: [
@@ -68,6 +74,11 @@ class ScoreDisplayScreen extends StatelessWidget {
                 await OpenFilex.open((file.path));
               }
             },
+            style: _scoreProvider.getHaveUnsavedChange
+                ? ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 70, 67, 255),
+                  )
+                : null,
             child: Row(
               children: _scoreProvider.isFetching
                   ? const [Text('Saving..')]
@@ -76,7 +87,7 @@ class ScoreDisplayScreen extends StatelessWidget {
                       Text('Save'),
                     ],
             ),
-          )
+          ),
         ],
       ),
       body: SingleChildScrollView(
