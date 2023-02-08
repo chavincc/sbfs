@@ -33,6 +33,22 @@ class ScoreDisplayScreen extends StatelessWidget {
     final _synkinesisTotalScore = _scoreProvider.getGroupSumScore('Synkinesis');
 
     return Scaffold(
+      floatingActionButton: _scoreProvider.getHaveUnsavedChange
+          ? FloatingActionButton.extended(
+              onPressed: () {},
+              label: const Text('unsaved change(s)'),
+              backgroundColor: Colors.grey,
+            )
+          : FloatingActionButton.extended(
+              onPressed: () {
+                _scoreProvider.reset();
+                _facesProvider.reset();
+                _facesProvider.reset();
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+              label: const Text('new case'),
+              icon: const Icon(Icons.face_retouching_natural),
+            ),
       appBar: AppBar(
         title: const Text('Score'),
         actions: [
@@ -58,6 +74,11 @@ class ScoreDisplayScreen extends StatelessWidget {
                 await OpenFilex.open((file.path));
               }
             },
+            style: _scoreProvider.getHaveUnsavedChange
+                ? ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 70, 67, 255),
+                  )
+                : null,
             child: Row(
               children: _scoreProvider.isFetching
                   ? const [Text('Saving..')]
@@ -66,7 +87,7 @@ class ScoreDisplayScreen extends StatelessWidget {
                       Text('Save'),
                     ],
             ),
-          )
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -75,6 +96,32 @@ class ScoreDisplayScreen extends StatelessWidget {
           padding: const EdgeInsets.all(30),
           child: Column(
             children: [
+              canEditScore
+                  ? Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(bottom: 20),
+                      child: Text(
+                        'tap on score to adjust.',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[600],
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 20),
+                child: Text(
+                  'press save to generate pdf report.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
               const ScoreTitle(text: 'Resting'),
               ...titleGroup['Resting']!
                   .map(

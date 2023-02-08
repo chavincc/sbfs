@@ -8,7 +8,14 @@ import '../config/http.dart';
 
 class Scores with ChangeNotifier {
   bool _fetching = false;
+  bool _haveUnsavedChange = false;
   ScoreInstance _sunnyBrookScore = {};
+
+  void reset() {
+    _fetching = false;
+    _sunnyBrookScore = {};
+    notifyListeners();
+  }
 
   ScoreInstance get getSunnyBrookScore => _sunnyBrookScore;
 
@@ -27,13 +34,17 @@ class Scores with ChangeNotifier {
 
   bool get isFetching => _fetching;
 
+  bool get getHaveUnsavedChange => _haveUnsavedChange;
+
   void setSunnyBrookScore(ScoreInstance scoreInstance) {
     _sunnyBrookScore = scoreInstance;
+    _haveUnsavedChange = false;
     notifyListeners();
   }
 
   void setSunnyBrookScoreByKey(String key, int value) {
     _sunnyBrookScore[key] = value;
+    _haveUnsavedChange = true;
     notifyListeners();
   }
 
@@ -63,6 +74,7 @@ class Scores with ChangeNotifier {
         final respStr = response.body;
         final parsed = jsonDecode(respStr);
         updateSuccess = parsed['status'] || false;
+        _haveUnsavedChange = false;
       } else {
         await showErrorDialog(
           context,
