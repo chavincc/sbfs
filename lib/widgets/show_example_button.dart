@@ -23,9 +23,9 @@ class ShowExampleButton extends StatelessWidget {
   final Map<Poses, String> _pose2imagePath = {
     Poses.resting: 'images/dummy-guide.jpg',
     Poses.browLift: 'images/brow-lift-example.png',
-    Poses.eyesClose: 'images/dummy-guide.jpg',
-    Poses.lipPucker: 'images/dummy-guide.jpg',
-    Poses.smile: 'images/dummy-guide.jpg',
+    Poses.eyesClose: 'images/eyes_closure_example.png',
+    Poses.lipPucker: 'images/smile-and-lip-pucker-example.png',
+    Poses.smile: 'images/smile-and-lip-pucker-example.png',
     Poses.snarl: 'images/dummy-guide.jpg',
   };
 
@@ -39,9 +39,39 @@ class ShowExampleButton extends StatelessWidget {
         '68, 473 on midpupil',
       ),
     ],
-    Poses.eyesClose: [],
-    Poses.lipPucker: [],
-    Poses.smile: [],
+    Poses.eyesClose: [
+      buildDescriptionLine(
+        'upper and lower eyelid of each eye',
+      ),
+      buildDescriptionLine(
+        '(159 and 145 on patient\'s right,',
+      ),
+      buildDescriptionLine(
+        '386 and 374 on the left)',
+      ),
+    ],
+    Poses.lipPucker: [
+      buildDescriptionLine(
+        '0 on the cupid bow',
+      ),
+      buildDescriptionLine(
+        '17 on the middle joint of lower lip',
+      ),
+      buildDescriptionLine(
+        '61, 291 on patient\'s right and left oral commissure',
+      ),
+    ],
+    Poses.smile: [
+      buildDescriptionLine(
+        '0 on the cupid bow',
+      ),
+      buildDescriptionLine(
+        '17 on the middle joint of lower lip',
+      ),
+      buildDescriptionLine(
+        '61, 291 on patient\'s right and left oral commissure',
+      ),
+    ],
     Poses.snarl: [],
   };
 
