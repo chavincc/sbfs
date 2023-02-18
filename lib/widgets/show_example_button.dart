@@ -21,16 +21,26 @@ Widget buildDescriptionLine(String desc) {
 class ShowExampleButton extends StatelessWidget {
   final Poses _pose;
   final Map<Poses, String> _pose2imagePath = {
-    Poses.resting: 'images/dummy-guide.jpg',
+    Poses.resting: 'images/resting-example.png',
     Poses.browLift: 'images/brow-lift-example.png',
     Poses.eyesClose: 'images/eyes_closure_example.png',
     Poses.lipPucker: 'images/smile-and-lip-pucker-example.png',
     Poses.smile: 'images/smile-and-lip-pucker-example.png',
-    Poses.snarl: 'images/dummy-guide.jpg',
+    Poses.snarl: 'images/snarl-example.png',
   };
 
   final Map<Poses, List<Widget>> _pose2description = {
-    Poses.resting: [],
+    Poses.resting: [
+      buildDescriptionLine(
+        'eye brows : upper border of 2/3 lateral of eyebrow',
+      ),
+      buildDescriptionLine(
+        'eyes : upper and lower eyelid of each eye, midpupil, and caruncle',
+      ),
+      buildDescriptionLine(
+        'mouth : cupid bow, cupid peak, oral commissure, and middle joint of lower lip',
+      ),
+    ],
     Poses.browLift: [
       buildDescriptionLine(
         '105, 334 on upper border of 2/3 lateral of eyebrow',
@@ -72,7 +82,14 @@ class ShowExampleButton extends StatelessWidget {
         '61, 291 on patient\'s right and left oral commissure',
       ),
     ],
-    Poses.snarl: [],
+    Poses.snarl: [
+      buildDescriptionLine(
+        '133, 362 on patient\'s right and left caruncle',
+      ),
+      buildDescriptionLine(
+        '37, 267 on patient\'s right and left cupid peak',
+      ),
+    ],
   };
 
   ShowExampleButton({required Poses pose, Key? key})
@@ -92,21 +109,27 @@ class ShowExampleButton extends StatelessWidget {
         ),
       ),
       onPressed: () {
-        showModalBottomSheet<void>(
+        showModalBottomSheet<dynamic>(
+          isScrollControlled: true,
           context: context,
           builder: (builder) {
-            return SizedBox(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image(
-                    image: AssetImage(
-                      _pose2imagePath[_pose]!,
-                    ),
+            return Wrap(
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image(
+                        image: AssetImage(
+                          _pose2imagePath[_pose]!,
+                        ),
+                      ),
+                      ...(_pose2description[_pose]!.toList()),
+                    ],
                   ),
-                  ...(_pose2description[_pose]!.toList()),
-                ],
-              ),
+                ),
+              ],
             );
           },
         );
