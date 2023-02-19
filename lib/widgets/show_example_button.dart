@@ -35,7 +35,7 @@ class ShowExampleButton extends StatelessWidget {
         'eye brows : upper border of 2/3 lateral of eyebrow',
       ),
       buildDescriptionLine(
-        'eyes : upper and lower eyelid of each eye, midpupil, and caruncle',
+        'eyes : upper and lower eyelid of each eye, midpupil, and medial canthus',
       ),
       buildDescriptionLine(
         'mouth : cupid bow, cupid peak, oral commissure, and middle joint of lower lip',
@@ -84,7 +84,7 @@ class ShowExampleButton extends StatelessWidget {
     ],
     Poses.snarl: [
       buildDescriptionLine(
-        '133, 362 on patient\'s right and left caruncle',
+        '133, 362 on patient\'s right and left medial canthus',
       ),
       buildDescriptionLine(
         '37, 267 on patient\'s right and left cupid peak',
